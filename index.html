@@ -3,67 +3,527 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تداول السعودية | لوحة متابعة السوق</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tadawul Market Dashboard</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#0b1220;color:#edf3ff;font-family:Tahoma,Arial}
-header{padding:25px;background:#14243b;border-bottom:2px solid #19a77c}
-header h1{margin:0 0 8px;font-size:25px}
-header p,.muted{color:#9aabc2}
-main{max-width:1200px;margin:auto;padding:22px}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.card,.panel{background:#15243a;border:1px solid #30415a;border-radius:12px;padding:20px}
-.card small{color:#a5b5ca}
-.value{font-size:25px;font-weight:bold;margin-top:12px;color:#22c995}
-.panel{margin-top:22px;overflow-x:auto}
-input{background:#0c1729;border:1px solid #40516b;padding:12px;color:white;border-radius:8px;width:100%;margin:12px 0}
-table{width:100%;border-collapse:collapse;white-space:nowrap}
-td,th{padding:14px;text-align:right;border-bottom:1px solid #30415a}
-th{color:#9fb2ca}
-.notice{background:#3b2d16;color:#ffd98b;padding:12px;border-radius:8px;margin-top:15px}
-@media(max-width:700px){.cards{grid-template-columns:repeat(2,1fr)}main{padding:12px}}
+:root {
+  --bg: #0b1220;
+  --panel: #142138;
+  --border: #293b54;
+  --text: #edf3ff;
+  --muted: #9aabc2;
+  --green: #22c995;
+  --red: #fb7185;
+  --gold: #e9b949;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Tahoma, Arial, sans-serif;
+}
+
+header {
+  background: #111d30;
+  padding: 25px 5%;
+  border-bottom: 2px solid var(--green);
+}
+
+header h1 {
+  margin: 0 0 8px;
+  font-size: 25px;
+}
+
+header p {
+  color: var(--muted);
+  margin: 0;
+  font-size: 13px;
+}
+
+main {
+  max-width: 1450px;
+  margin: auto;
+  padding: 25px 4%;
+}
+
+.status {
+  background: #392e19;
+  color: #ffda8b;
+  padding: 13px;
+  border-radius: 9px;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.card, .panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.card small {
+  color: var(--muted);
+}
+
+.value {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 13px;
+  color: var(--green);
+}
+
+.panel {
+  margin-top: 22px;
+}
+
+.panel h3 {
+  margin-top: 0;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 15px 0;
+}
+
+input, select, button {
+  background: #0d192b;
+  border: 1px solid #3a4c65;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+input {
+  flex: 1;
+  min-width: 180px;
+}
+
+button {
+  background: #138665;
+  cursor: pointer;
+  border: none;
+}
+
+button:hover {
+  background: #19a77c;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+th, td {
+  padding: 14px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+th {
+  color: #a8bad1;
+  cursor: pointer;
+}
+
+tr:hover {
+  background: #1c2d46;
+}
+
+.green {
+  color: var(--green);
+}
+
+.red {
+  color: var(--red);
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+a {
+  color: #62b9ef;
+  text-decoration: none;
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  padding: 25px;
+  font-size: 12px;
+}
+
+@media(max-width: 800px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  main {
+    padding: 15px;
+  }
+}
+
+@media(max-width: 430px) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .card {
+    padding: 13px;
+  }
+
+  .value {
+    font-size: 18px;
+  }
+}
 </style>
 </head>
+
 <body>
+
 <header>
-<h1>🇸🇦 تداول السعودية</h1>
-<p>لوحة متابعة السوق الرئيسية | Tadawul Dashboard V1</p>
+  <h1>🇸🇦 تداول السعودية</h1>
+  <p>لوحة متابعة السوق الرئيسية | Tadawul Market Dashboard V1</p>
 </header>
+
 <main>
-<div class="cards">
-<div class="card"><small>عدد الشركات</small><div class="value" id="count">—</div></div>
-<div class="card"><small>حجم التداول</small><div class="value" id="volume">—</div></div>
-<div class="card"><small>قيمة التداول</small><div class="value" id="amount">—</div></div>
-<div class="card"><small>الأسهم المرتفعة</small><div class="value" id="up">—</div></div>
+
+<div class="status" id="status">
+  بيانات السوق غير متصلة حالياً. استورد ملف CSV لعرض بيانات الشركات.
 </div>
-<div class="notice">بيانات تجريبية للواجهة فقط. لم يتم ربط أسعار السوق الحقيقية بعد.</div>
-<div class="panel">
-<h3>شركات السوق الرئيسية</h3>
-<input id="search" placeholder="ابحث عن شركة أو رمز تداول...">
-<table>
-<thead><tr>
-<th>الرمز</th><th>الشركة</th><th>آخر سعر</th>
-<th>التغير %</th><th>حجم التداول</th><th>P/E</th><th>EPS</th>
-</tr></thead>
-<tbody id="stocks">
-<tr><td colspan="7" style="text-align:center">بانتظار ربط بيانات السوق</td></tr>
-</tbody>
-</table>
-<p class="muted">آخر تحديث: لم يتم الاتصال بمصدر البيانات</p>
-</div>
-<div class="panel">
-<h3>مصادر البيانات</h3>
-<p><a style="color:#56b4e9" href="https://www.saudiexchange.sa/wps/portal/saudiexchange/ourmarkets/main-market-watch?locale=ar">مراقبة السوق الرئيسية</a></p>
-<p><a style="color:#56b4e9" href="https://www.saudiexchange.sa/Resources/Reports-v2/DailyFinancialIndicators_ar.html">المؤشرات المالية اليومية</a></p>
-</div>
+
+<section class="cards">
+
+  <div class="card">
+    <small>عدد الشركات</small>
+    <div class="value" id="count">0</div>
+  </div>
+
+  <div class="card">
+    <small>حجم التداول</small>
+    <div class="value" id="volume">0</div>
+  </div>
+
+  <div class="card">
+    <small>قيمة التداول (ريال)</small>
+    <div class="value" id="amount">0</div>
+  </div>
+
+  <div class="card">
+    <small>الأسهم المرتفعة</small>
+    <div class="value" id="up">0</div>
+  </div>
+
+</section>
+
+<section class="panel">
+
+  <h3>قائمة شركات السوق الرئيسية</h3>
+
+  <div class="toolbar">
+
+    <input
+      id="search"
+      type="search"
+      placeholder="ابحث باسم الشركة أو رمز التداول..."
+    >
+
+    <button id="importButton" type="button">
+      استيراد CSV
+    </button>
+
+    <input
+      id="csv"
+      type="file"
+      accept=".csv"
+      hidden
+    >
+
+  </div>
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th data-sort="symbol">الرمز ↕</th>
+          <th data-sort="name">الشركة ↕</th>
+          <th data-sort="price">آخر سعر ↕</th>
+          <th data-sort="change">التغير % ↕</th>
+          <th data-sort="volume">حجم التداول ↕</th>
+          <th data-sort="value">قيمة التداول ↕</th>
+          <th data-sort="eps">EPS ↕</th>
+          <th data-sort="pe">P/E ↕</th>
+        </tr>
+      </thead>
+
+      <tbody id="stocks">
+        <tr>
+          <td colspan="8" style="text-align:center;padding:35px">
+            لا توجد بيانات مستوردة حتى الآن
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+
+  </div>
+
+  <p class="muted" id="lastUpdate">
+    آخر تحديث: لا توجد بيانات
+  </p>
+
+</section>
+
+<section class="panel">
+
+  <h3>مصادر البيانات الرسمية</h3>
+
+  <p>
+    <a href="https://www.saudiexchange.sa/wps/portal/saudiexchange/ourmarkets/main-market-watch?locale=ar" target="_blank" rel="noopener">
+      مراقبة السوق الرئيسية
+    </a>
+  </p>
+
+  <p>
+    <a href="https://www.saudiexchange.sa/Resources/Reports-v2/DailyFinancialIndicators_ar.html" target="_blank" rel="noopener">
+      المؤشرات المالية اليومية
+    </a>
+  </p>
+
+</section>
+
 </main>
+
+<footer>
+  Tadawul Market Dashboard V1
+  <br>
+  Saudi Stock Market Analytics
+</footer>
+
 <script>
-document.getElementById('count').textContent='غير متاح';
-document.getElementById('volume').textContent='غير متاح';
-document.getElementById('amount').textContent='غير متاح';
-document.getElementById('up').textContent='غير متاح';
+"use strict";
+
+let stocks = [];
+let sortColumn = "";
+let sortAscending = true;
+
+const numberFormat = value =>
+  Number(value || 0).toLocaleString("en-US", {
+    maximumFractionDigits: 2
+  });
+
+const escapeHTML = value =>
+  String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+
+function updateDashboard() {
+
+  const totalVolume = stocks.reduce(
+    (sum, item) => sum + Number(item.volume || 0), 0
+  );
+
+  const totalValue = stocks.reduce(
+    (sum, item) => sum + Number(item.value || 0), 0
+  );
+
+  const rising = stocks.filter(
+    item => Number(item.change || 0) > 0
+  ).length;
+
+  document.getElementById("count").textContent =
+    numberFormat(stocks.length);
+
+  document.getElementById("volume").textContent =
+    numberFormat(totalVolume);
+
+  document.getElementById("amount").textContent =
+    numberFormat(totalValue);
+
+  document.getElementById("up").textContent =
+    numberFormat(rising);
+
+  renderTable();
+}
+
+function renderTable() {
+
+  const query = document
+    .getElementById("search")
+    .value.toLowerCase();
+
+  let filtered = stocks.filter(item =>
+    String(item.name || "").toLowerCase().includes(query) ||
+    String(item.symbol || "").toLowerCase().includes(query)
+  );
+
+  if (sortColumn) {
+    filtered.sort((a, b) => {
+
+      let x = a[sortColumn] ?? "";
+      let y = b[sortColumn] ?? "";
+
+      if (!isNaN(Number(x)) && !isNaN(Number(y))) {
+        x = Number(x);
+        y = Number(y);
+      } else {
+        x = String(x).toLowerCase();
+        y = String(y).toLowerCase();
+      }
+
+      if (x < y) return sortAscending ? -1 : 1;
+      if (x > y) return sortAscending ? 1 : -1;
+      return 0;
+    });
+  }
+
+  const tbody = document.getElementById("stocks");
+
+  if (!filtered.length) {
+    tbody.innerHTML =
+      '<tr><td colspan="8">لا توجد نتائج مطابقة</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(item => {
+
+    const change = Number(item.change || 0);
+
+    return `
+      <tr>
+        <td>${escapeHTML(item.symbol)}</td>
+        <td>${escapeHTML(item.name)}</td>
+        <td>${numberFormat(item.price)}</td>
+        <td class="${change >= 0 ? "green" : "red"}">
+          ${numberFormat(change)}%
+        </td>
+        <td>${numberFormat(item.volume)}</td>
+        <td>${numberFormat(item.value)}</td>
+        <td>${numberFormat(item.eps)}</td>
+        <td>${numberFormat(item.pe)}</td>
+      </tr>
+    `;
+
+  }).join("");
+}
+
+document.getElementById("search")
+  .addEventListener("input", renderTable);
+
+document.getElementById("importButton")
+  .addEventListener("click", () => {
+    document.getElementById("csv").click();
+  });
+
+document.querySelectorAll("th[data-sort]")
+  .forEach(header => {
+
+    header.addEventListener("click", () => {
+
+      const column = header.dataset.sort;
+
+      if (sortColumn === column) {
+        sortAscending = !sortAscending;
+      } else {
+        sortColumn = column;
+        sortAscending = true;
+      }
+
+      renderTable();
+    });
+
+  });
+
+document.getElementById("csv")
+  .addEventListener("change", async event => {
+
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    try {
+
+      const text = (await file.text())
+        .replace(/^\uFEFF/, "")
+        .trim();
+
+      const lines = text.split(/\r?\n/);
+
+      const headers = lines.shift()
+        .split(",")
+        .map(header => header.trim().toLowerCase());
+
+      const required = [
+        "symbol", "name", "price", "change",
+        "volume", "value", "eps", "pe"
+      ];
+
+      if (!required.every(header => headers.includes(header))) {
+        throw new Error(
+          "تأكد من وجود الأعمدة المطلوبة: " +
+          required.join(", ")
+        );
+      }
+
+      stocks = lines.filter(Boolean).map(line => {
+
+        const cells = line.split(",");
+
+        return Object.fromEntries(
+          headers.map((header, index) => [
+            header,
+            (cells[index] || "").trim()
+          ])
+        );
+
+      });
+
+      updateDashboard();
+
+      document.getElementById("status").textContent =
+        "تم استيراد البيانات بنجاح: " + stocks.length + " شركة";
+
+      document.getElementById("lastUpdate").textContent =
+        "آخر تحديث: " + new Date().toLocaleString("ar-SA");
+
+    } catch (error) {
+
+      alert(error.message);
+
+    }
+
+  });
+
 </script>
+
 </body>
 </html>
-

@@ -1,1 +1,69 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تداول السعودية | لوحة متابعة السوق</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1220;color:#edf3ff;font-family:Tahoma,Arial}
+header{padding:25px;background:#14243b;border-bottom:2px solid #19a77c}
+header h1{margin:0 0 8px;font-size:25px}
+header p,.muted{color:#9aabc2}
+main{max-width:1200px;margin:auto;padding:22px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card,.panel{background:#15243a;border:1px solid #30415a;border-radius:12px;padding:20px}
+.card small{color:#a5b5ca}
+.value{font-size:25px;font-weight:bold;margin-top:12px;color:#22c995}
+.panel{margin-top:22px;overflow-x:auto}
+input{background:#0c1729;border:1px solid #40516b;padding:12px;color:white;border-radius:8px;width:100%;margin:12px 0}
+table{width:100%;border-collapse:collapse;white-space:nowrap}
+td,th{padding:14px;text-align:right;border-bottom:1px solid #30415a}
+th{color:#9fb2ca}
+.notice{background:#3b2d16;color:#ffd98b;padding:12px;border-radius:8px;margin-top:15px}
+@media(max-width:700px){.cards{grid-template-columns:repeat(2,1fr)}main{padding:12px}}
+</style>
+</head>
+<body>
+<header>
+<h1>🇸🇦 تداول السعودية</h1>
+<p>لوحة متابعة السوق الرئيسية | Tadawul Dashboard V1</p>
+</header>
+<main>
+<div class="cards">
+<div class="card"><small>عدد الشركات</small><div class="value" id="count">—</div></div>
+<div class="card"><small>حجم التداول</small><div class="value" id="volume">—</div></div>
+<div class="card"><small>قيمة التداول</small><div class="value" id="amount">—</div></div>
+<div class="card"><small>الأسهم المرتفعة</small><div class="value" id="up">—</div></div>
+</div>
+<div class="notice">بيانات تجريبية للواجهة فقط. لم يتم ربط أسعار السوق الحقيقية بعد.</div>
+<div class="panel">
+<h3>شركات السوق الرئيسية</h3>
+<input id="search" placeholder="ابحث عن شركة أو رمز تداول...">
+<table>
+<thead><tr>
+<th>الرمز</th><th>الشركة</th><th>آخر سعر</th>
+<th>التغير %</th><th>حجم التداول</th><th>P/E</th><th>EPS</th>
+</tr></thead>
+<tbody id="stocks">
+<tr><td colspan="7" style="text-align:center">بانتظار ربط بيانات السوق</td></tr>
+</tbody>
+</table>
+<p class="muted">آخر تحديث: لم يتم الاتصال بمصدر البيانات</p>
+</div>
+<div class="panel">
+<h3>مصادر البيانات</h3>
+<p><a style="color:#56b4e9" href="https://www.saudiexchange.sa/wps/portal/saudiexchange/ourmarkets/main-market-watch?locale=ar">مراقبة السوق الرئيسية</a></p>
+<p><a style="color:#56b4e9" href="https://www.saudiexchange.sa/Resources/Reports-v2/DailyFinancialIndicators_ar.html">المؤشرات المالية اليومية</a></p>
+</div>
+</main>
+<script>
+document.getElementById('count').textContent='غير متاح';
+document.getElementById('volume').textContent='غير متاح';
+document.getElementById('amount').textContent='غير متاح';
+document.getElementById('up').textContent='غير متاح';
+</script>
+</body>
+</html>
+

@@ -1,711 +1,3264 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1423">
-<title>Tadawul | لوحة السوق السعودي</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-:root {
-  --bg:#0b1423;
-  --surface:#111e30;
-  --surface2:#17263b;
-  --border:#263951;
-  --text:#f1f5fb;
-  --muted:#91a2b9;
-  --green:#20c997;
-  --red:#fa7185;
-  --gold:#e7b957;
-  --blue:#5da9ed;
-}
+    <title>Saudi Stocks Dashboard</title>
 
-*{box-sizing:border-box}
+    <style>
+        :root {
+            --bg: #08111f;
+            --card: #101b2d;
+            --card2: #162338;
+            --line: #26364e;
+            --text: #f4f7fb;
+            --muted: #91a0b5;
+            --green: #20c978;
+            --red: #ef5350;
+            --blue: #4d8dff;
+            --yellow: #f5b942;
+        }
 
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Tahoma,Arial,sans-serif;
-}
+        * {
+            box-sizing: border-box;
+        }
 
-button,input,select{font-family:inherit}
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Tahoma, Arial, sans-serif;
+        }
 
-.topbar{
-  background:#101d30;
-  border-bottom:1px solid var(--border);
-  padding:17px 4%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  flex-wrap:wrap;
-}
+        .container {
+            width: min(1450px, 95%);
+            margin: auto;
+        }
 
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
+        header {
+            border-bottom: 1px solid var(--line);
+            background: #0b1526;
+            padding: 22px 0;
+        }
 
-.logo{
-  width:43px;
-  height:43px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  background:#123e39;
-  color:var(--green);
-  font-size:23px;
-}
+        .head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
 
-.brand h1{
-  margin:0;
-  font-size:19px;
-}
+        .brand h1 {
+            margin: 0;
+            font-size: 25px;
+        }
 
-.brand p{
-  margin:5px 0 0;
-  font-size:11px;
-  color:var(--muted);
-}
+        .brand p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
 
-.market-status{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  color:var(--muted);
-  font-size:12px;
-}
+        .status {
+            font-size: 13px;
+            color: var(--muted);
+        }
 
-.dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:var(--gold);
-}
+        .dot {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--yellow);
+            margin-left: 7px;
+        }
 
-.container{
-  max-width:1500px;
-  margin:auto;
-  padding:25px 4%;
-}
+        nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 18px 0;
+        }
 
-.heading{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  flex-wrap:wrap;
-  margin-bottom:23px;
-}
+        nav button,
+        .btn {
+            border: 1px solid var(--line);
+            background: var(--card);
+            color: var(--text);
+            padding: 10px 15px;
+            border-radius: 9px;
+            cursor: pointer;
+        }
 
-.heading h2{
-  margin:0;
-  font-size:23px;
-}
+        nav button.active,
+        nav button:hover,
+        .primary {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: #fff;
+        }
 
-.heading p{
-  color:var(--muted);
-  font-size:12px;
-  margin:7px 0 0;
-}
+        .danger {
+            background: #8f2525 !important;
+            border-color: #8f2525 !important;
+        }
 
-.date{
-  color:var(--muted);
-  font-size:12px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:10px 14px;
-  border-radius:9px;
-}
+        .section {
+            display: none;
+        }
 
-.notice{
-  padding:13px 16px;
-  background:#302719;
-  border:1px solid #5c4827;
-  color:#f2ce83;
-  border-radius:10px;
-  font-size:12px;
-  margin-bottom:20px;
-}
+        .section.active {
+            display: block;
+        }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:15px;
-}
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 18px 0 13px;
+        }
 
-.card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:19px;
-  min-width:0;
-}
+        .section-title h2 {
+            margin: 0;
+            font-size: 20px;
+        }
 
-.card-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
+        .grid {
+            display: grid;
+            gap: 14px;
+        }
 
-.card-label{
-  font-size:12px;
-  color:var(--muted);
-}
+        .g4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
 
-.card-icon{
-  width:35px;
-  height:35px;
-  border-radius:9px;
-  display:grid;
-  place-items:center;
-  background:#20334b;
-  font-size:17px;
-}
+        .g2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
 
-.card-value{
-  font-size:24px;
-  font-weight:bold;
-  margin-top:18px;
-  letter-spacing:.3px;
-}
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 18px;
+        }
 
-.card-foot{
-  color:var(--muted);
-  font-size:11px;
-  margin-top:9px;
-}
+        .label {
+            color: var(--muted);
+            font-size: 12px;
+        }
 
-.green{color:var(--green)}
-.red{color:var(--red)}
-.gold{color:var(--gold)}
+        .big {
+            font-size: 27px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
 
-.section{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:13px;
-  margin-top:22px;
-  overflow:hidden;
-}
+        .green {
+            color: var(--green);
+        }
 
-.section-head{
-  padding:20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
-  border-bottom:1px solid var(--border);
-}
+        .red {
+            color: var(--red);
+        }
 
-.section-head h3{
-  margin:0;
-  font-size:16px;
-}
+        .muted {
+            color: var(--muted);
+        }
 
-.section-head p{
-  margin:6px 0 0;
-  color:var(--muted);
-  font-size:11px;
-}
+        .controls {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
 
-.tools{
-  padding:16px 20px;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
+        input,
+        select {
+            background: var(--card);
+            border: 1px solid var(--line);
+            color: var(--text);
+            padding: 11px 12px;
+            border-radius: 9px;
+            outline: none;
+        }
 
-input,select{
-  background:#0c192a;
-  color:var(--text);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:11px 13px;
-  outline:none;
-}
+        input:focus,
+        select:focus {
+            border-color: var(--blue);
+        }
 
-input:focus,select:focus{
-  border-color:var(--green);
-}
+        .table-wrap {
+            overflow: auto;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+        }
 
-#search{
-  flex:1;
-  min-width:190px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 950px;
+        }
 
-.btn{
-  border:0;
-  background:#137d62;
-  color:white;
-  border-radius:8px;
-  padding:11px 17px;
-  cursor:pointer;
-  font-size:12px;
-}
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--line);
+            text-align: right;
+            font-size: 13px;
+            white-space: nowrap;
+        }
 
-.btn:hover{background:#169875}
+        th {
+            background: #0d1728;
+            color: var(--muted);
+            font-size: 12px;
+        }
 
-.table-wrap{
-  overflow-x:auto;
-}
+        tr:hover td {
+            background: #ffffff04;
+        }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  white-space:nowrap;
-}
+        .symbol {
+            font-weight: bold;
+            color: #6ea4ff;
+        }
 
-th{
-  color:var(--muted);
-  background:#15243a;
-  font-size:11px;
-  font-weight:normal;
-  padding:15px 17px;
-  text-align:right;
-  cursor:pointer;
-}
+        .star {
+            cursor: pointer;
+            font-size: 18px;
+            color: #53647b;
+        }
 
-td{
-  padding:15px 17px;
-  font-size:12px;
-  border-bottom:1px solid #203149;
-}
+        .star.on {
+            color: #ffd43b;
+        }
 
-tbody tr:hover{
-  background:#192b43;
-}
+        .badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: var(--card2);
+            font-size: 11px;
+        }
 
-.company{
-  font-weight:bold;
-}
+        .badge.g {
+            color: var(--green);
+        }
 
-.symbol{
-  color:var(--blue);
-  font-weight:bold;
-}
+        .badge.r {
+            color: var(--red);
+        }
 
-.empty{
-  text-align:center;
-  padding:45px 15px;
-  color:var(--muted);
-  font-size:13px;
-}
+        .analysis {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
 
-.bottom{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 20px;
-  color:var(--muted);
-  font-size:11px;
-  gap:12px;
-  flex-wrap:wrap;
-}
+        .metric {
+            padding: 11px 0;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+        }
 
-.sources{
-  padding:20px;
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-}
+        .metric:last-child {
+            border-bottom: 0;
+        }
 
-.source-link{
-  display:inline-block;
-  background:#1a2d44;
-  border:1px solid var(--border);
-  padding:12px 15px;
-  border-radius:8px;
-  color:var(--blue);
-  font-size:12px;
-  text-decoration:none;
-}
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000b;
+            z-index: 20;
+            padding: 25px;
+            overflow: auto;
+        }
 
-.source-link:hover{
-  background:#243a54;
-}
+        .modal.open {
+            display: block;
+        }
 
-footer{
-  text-align:center;
-  padding:25px;
-  color:#71849d;
-  font-size:11px;
-}
+        .modal-box {
+            width: min(900px, 96%);
+            margin: 35px auto;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            padding: 22px;
+        }
 
-@media(max-width:950px){
-  .grid{grid-template-columns:repeat(2,1fr)}
-}
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+        }
 
-@media(max-width:550px){
-  .container{padding:18px 12px}
-  .topbar{padding:15px}
-  .heading h2{font-size:19px}
-  .card{padding:14px}
-  .card-value{font-size:19px}
-  .grid{gap:9px}
-  .section-head{padding:15px}
-  .tools{padding:12px}
-  .btn{flex:1}
-}
-</style>
+        .close {
+            font-size: 25px;
+            cursor: pointer;
+            color: var(--muted);
+        }
+
+        .alert {
+            display: none;
+            background: #3a1c1c;
+            border: 1px solid #7d2a2a;
+            color: #ffcaca;
+            padding: 12px;
+            border-radius: 10px;
+            margin: 12px 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 35px;
+            color: var(--muted);
+        }
+
+        footer {
+            border-top: 1px solid var(--line);
+            margin-top: 35px;
+            padding: 25px 0;
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media(max-width:1000px) {
+            .g4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .analysis {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .g2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:600px) {
+            .g4,
+            .analysis {
+                grid-template-columns: 1fr;
+            }
+
+            .head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<header class="topbar">
-  <div class="brand">
-    <div class="logo">س</div>
-    <div>
-      <h1>تداول السعودية</h1>
-      <p>SAUDI STOCK MARKET ANALYTICS</p>
-    </div>
-  </div>
+<header>
 
-  <div class="market-status">
-    <span class="dot"></span>
-    <span>حالة الاتصال: غير متصل بمصدر الأسعار</span>
-  </div>
+    <div class="container head">
+
+        <div class="brand">
+
+            <h1>
+                Saudi Stocks Dashboard
+            </h1>
+
+            <p>
+                TASI • Saudi Stocks • Valuation • Watchlist
+            </p>
+
+        </div>
+
+        <div class="status">
+
+            <span
+                class="dot"
+                id="dot"
+            ></span>
+
+            <span id="status">
+                جاري التحميل...
+            </span>
+
+        </div>
+
+    </div>
+
 </header>
+
 
 <main class="container">
 
-  <div class="heading">
-    <div>
-      <h2>لوحة السوق الرئيسية</h2>
-      <p>نظرة عامة على أداء الشركات ومؤشرات التداول</p>
-    </div>
-    <div class="date" id="clock">--</div>
-  </div>
+    <!-- NAVIGATION -->
 
-  <div class="notice" id="notice">
-    ⚠️ وضع تجريبي: لم يتم ربط بيانات الأسعار الحقيقية بعد.
-    الأرقام المعروضة كحالة أولية وليست أسعار السوق.
-  </div>
+    <nav>
 
-  <section class="grid">
+        <button
+            class="active"
+            onclick="tab('overview', this)"
+        >
+            الرئيسية
+        </button>
 
-    <div class="card">
-      <div class="card-top">
-        <span class="card-label">عدد الشركات</span>
-        <span class="card-icon">▦</span>
-      </div>
-      <div class="card-value" id="count">—</div>
-      <div class="card-foot">الشركات المستوردة</div>
-    </div>
+        <button
+            onclick="tab('stocks', this)"
+        >
+            الأسهم
+        </button>
 
-    <div class="card">
-      <div class="card-top">
-        <span class="card-label">إجمالي حجم التداول</span>
-        <span class="card-icon">⇅</span>
-      </div>
-      <div class="card-value" id="volume">—</div>
-      <div class="card-foot">إجمالي الكميات المستوردة</div>
-    </div>
+        <button
+            onclick="tab('watchlist', this)"
+        >
+            المفضلة
+        </button>
 
-    <div class="card">
-      <div class="card-top">
-        <span class="card-label">قيمة التداول</span>
-        <span class="card-icon">ر.س</span>
-      </div>
-      <div class="card-value" id="amount">—</div>
-      <div class="card-foot">بالريال السعودي</div>
-    </div>
+        <button
+            onclick="tab('valuation', this)"
+        >
+            التقييم
+        </button>
 
-    <div class="card">
-      <div class="card-top">
-        <span class="card-label">الأسهم المرتفعة</span>
-        <span class="card-icon">↗</span>
-      </div>
-      <div class="card-value green" id="up">—</div>
-      <div class="card-foot">من بيانات الشركات المستوردة</div>
-    </div>
+        <button
+            onclick="tab('settings', this)"
+        >
+            الإعدادات
+        </button>
 
-  </section>
+    </nav>
 
-  <section class="section">
 
-    <div class="section-head">
-      <div>
-        <h3>شركات السوق الرئيسية</h3>
-        <p>أسعار ومؤشرات الشركات المستوردة</p>
-      </div>
-    </div>
+    <div
+        id="alert"
+        class="alert"
+    ></div>
 
-    <div class="tools">
-      <input id="search" type="search"
-        placeholder="ابحث باسم الشركة أو رمز التداول...">
 
-      <button class="btn" id="importButton">
-        استيراد ملف CSV
-      </button>
+    <!-- ======================================================
+         OVERVIEW
+    ======================================================= -->
 
-      <input id="csv" type="file" accept=".csv" hidden>
-    </div>
+    <section
+        id="overview"
+        class="section active"
+    >
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th data-sort="symbol">الرمز ↕</th>
-            <th data-sort="name">الشركة ↕</th>
-            <th data-sort="price">آخر سعر ↕</th>
-            <th data-sort="change">التغير % ↕</th>
-            <th data-sort="volume">حجم التداول ↕</th>
-            <th data-sort="value">قيمة التداول ↕</th>
-            <th data-sort="eps">EPS ↕</th>
-            <th data-sort="pe">P/E ↕</th>
-          </tr>
-        </thead>
-        <tbody id="stocks">
-          <tr>
-            <td colspan="8" class="empty">
-              لم يتم استيراد بيانات الشركات بعد
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+        <div class="section-title">
 
-    <div class="bottom">
-      <span id="resultCount">عدد النتائج: 0</span>
-      <span id="lastUpdate">آخر تحديث: لا توجد بيانات</span>
-    </div>
+            <h2>
+                نظرة عامة
+            </h2>
 
-  </section>
+            <button
+                class="btn primary"
+                onclick="refresh()"
+            >
+                تحديث الآن
+            </button>
 
-  <section class="section">
-    <div class="section-head">
-      <div>
-        <h3>مصادر بيانات السوق</h3>
-        <p>المصادر الرسمية المرجعية للمشروع</p>
-      </div>
-    </div>
+        </div>
 
-    <div class="sources">
-      <a class="source-link"
-        href="https://www.saudiexchange.sa/wps/portal/saudiexchange/ourmarkets/main-market-watch?locale=ar"
-        target="_blank" rel="noopener">
-        مراقبة السوق الرئيسية ←
-      </a>
 
-      <a class="source-link"
-        href="https://www.saudiexchange.sa/Resources/Reports-v2/DailyFinancialIndicators_ar.html"
-        target="_blank" rel="noopener">
-        المؤشرات المالية اليومية ←
-      </a>
-    </div>
-  </section>
+        <div class="grid g4">
+
+            <div class="card">
+
+                <div class="label">
+                    TASI
+                </div>
+
+                <div
+                    class="big"
+                    id="tasi"
+                >
+                    --
+                </div>
+
+                <div id="tasiChange">
+                    --
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="label">
+                    عدد الأسهم
+                </div>
+
+                <div
+                    class="big"
+                    id="count"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="label">
+                    الرابحون
+                </div>
+
+                <div
+                    class="big green"
+                    id="gainers"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="label">
+                    الخاسرون
+                </div>
+
+                <div
+                    class="big red"
+                    id="losers"
+                >
+                    --
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="section-title">
+
+            <h2>
+                أبرز الأسهم
+            </h2>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            السهم
+                        </th>
+
+                        <th>
+                            السعر
+                        </th>
+
+                        <th>
+                            التغير
+                        </th>
+
+                        <th>
+                            %
+                        </th>
+
+                        <th>
+                            الحجم
+                        </th>
+
+                        <th>
+                            الحالة
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="top">
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="loading"
+                        >
+                            جاري تحميل البيانات...
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================================
+         STOCKS
+    ======================================================= -->
+
+    <section
+        id="stocks"
+        class="section"
+    >
+
+        <div class="section-title">
+
+            <h2>
+                الأسهم السعودية
+            </h2>
+
+        </div>
+
+
+        <div class="controls">
+
+            <input
+                id="search"
+                placeholder="ابحث بالرمز أو الاسم"
+                oninput="renderStocks()"
+            >
+
+
+            <select
+                id="sort"
+                onchange="renderStocks()"
+            >
+
+                <option value="symbol">
+                    الرمز
+                </option>
+
+                <option value="price">
+                    السعر
+                </option>
+
+                <option value="changePct">
+                    نسبة التغير
+                </option>
+
+                <option value="volume">
+                    الحجم
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            ★
+                        </th>
+
+                        <th>
+                            الرمز
+                        </th>
+
+                        <th>
+                            الشركة
+                        </th>
+
+                        <th>
+                            السعر
+                        </th>
+
+                        <th>
+                            التغير
+                        </th>
+
+                        <th>
+                            %
+                        </th>
+
+                        <th>
+                            الحجم
+                        </th>
+
+                        <th>
+                            القيمة
+                        </th>
+
+                        <th>
+                            الحالة
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="stocks">
+
+                    <tr>
+
+                        <td
+                            colspan="9"
+                            class="loading"
+                        >
+                            جاري تحميل البيانات...
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================================
+         WATCHLIST
+    ======================================================= -->
+
+    <section
+        id="watchlist"
+        class="section"
+    >
+
+        <div class="section-title">
+
+            <h2>
+                Watchlist
+            </h2>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            السهم
+                        </th>
+
+                        <th>
+                            السعر
+                        </th>
+
+                        <th>
+                            %
+                        </th>
+
+                        <th>
+                            الحجم
+                        </th>
+
+                        <th>
+                            تحليل
+                        </th>
+
+                        <th>
+                            حذف
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="watch">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================================
+         VALUATION
+    ======================================================= -->
+
+    <section
+        id="valuation"
+        class="section"
+    >
+
+        <div class="section-title">
+
+            <h2>
+                التقييم
+            </h2>
+
+        </div>
+
+
+        <div class="grid g2">
+
+
+            <!-- GRAHAM -->
+
+            <div class="card">
+
+                <h3>
+                    Graham
+                </h3>
+
+
+                <div class="controls">
+
+                    <input
+                        id="eps"
+                        type="number"
+                        step="0.01"
+                        placeholder="EPS"
+                    >
+
+
+                    <input
+                        id="growth"
+                        type="number"
+                        step="0.1"
+                        placeholder="Growth %"
+                    >
+
+                </div>
+
+
+                <button
+                    class="btn primary"
+                    onclick="graham()"
+                >
+                    احسب
+                </button>
+
+
+                <div
+                    class="big"
+                    id="grahamResult"
+                >
+                    --
+                </div>
+
+
+                <p class="muted">
+
+                    القيمة التقريبية =
+                    EPS × (8.5 + 2g)
+
+                </p>
+
+            </div>
+
+
+            <!-- DCF -->
+
+            <div class="card">
+
+                <h3>
+                    DCF مبسط
+                </h3>
+
+
+                <div class="controls">
+
+                    <input
+                        id="fcf"
+                        type="number"
+                        step="0.01"
+                        placeholder="FCF"
+                    >
+
+
+                    <input
+                        id="dcfg"
+                        type="number"
+                        step="0.1"
+                        placeholder="Growth %"
+                    >
+
+
+                    <input
+                        id="discount"
+                        type="number"
+                        step="0.1"
+                        value="10"
+                        placeholder="Discount %"
+                    >
+
+
+                    <input
+                        id="terminal"
+                        type="number"
+                        step="0.1"
+                        value="3"
+                        placeholder="Terminal %"
+                    >
+
+
+                    <input
+                        id="shares"
+                        type="number"
+                        step="0.01"
+                        placeholder="Shares"
+                    >
+
+                </div>
+
+
+                <button
+                    class="btn primary"
+                    onclick="dcf()"
+                >
+                    احسب
+                </button>
+
+
+                <div
+                    class="big"
+                    id="dcfResult"
+                >
+                    --
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================================
+         SETTINGS
+    ======================================================= -->
+
+    <section
+        id="settings"
+        class="section"
+    >
+
+        <div class="section-title">
+
+            <h2>
+                الإعدادات ومصدر البيانات
+            </h2>
+
+        </div>
+
+
+        <div class="grid g2">
+
+
+            <div class="card">
+
+                <div class="metric">
+
+                    <span>
+                        مصدر الأسعار
+                    </span>
+
+                    <b>
+                        Yahoo Finance
+                    </b>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        API Key
+                    </span>
+
+                    <b class="green">
+                        غير مطلوب
+                    </b>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        نوع البيانات
+                    </span>
+
+                    <b>
+                        قد تكون متأخرة
+                    </b>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        التحديث
+                    </span>
+
+                    <b>
+                        كل 60 ثانية
+                    </b>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="metric">
+
+                    <span>
+                        آخر تحديث
+                    </span>
+
+                    <b id="last">
+                        --
+                    </b>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        وقت الرياض
+                    </span>
+
+                    <b id="clock">
+                        --
+                    </b>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        البيانات المحملة
+                    </span>
+
+                    <b id="loaded">
+                        --
+                    </b>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="section-title">
+
+            <h2>
+                Watchlist
+            </h2>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="controls">
+
+                <button
+                    class="btn primary"
+                    onclick="exportCSV()"
+                >
+                    تصدير CSV
+                </button>
+
+
+                <input
+                    type="file"
+                    id="csvFile"
+                    accept=".csv"
+                >
+
+
+                <button
+                    class="btn"
+                    onclick="importCSV()"
+                >
+                    استيراد CSV
+                </button>
+
+
+                <button
+                    class="btn danger"
+                    onclick="clearWatch()"
+                >
+                    مسح المفضلة
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
 
 </main>
 
-<footer>
-  TADAWUL MARKET DASHBOARD V2
-  <br><br>
-  واجهة تجريبية مستقلة – غير تابعة رسمياً لتداول السعودية
-</footer>
+
+<!-- =========================================================
+     ANALYSIS MODAL
+========================================================= -->
+
+<div
+    class="modal"
+    id="modal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-head">
+
+            <h2 id="mTitle">
+                تحليل السهم
+            </h2>
+
+            <span
+                class="close"
+                onclick="closeModal()"
+            >
+                ×
+            </span>
+
+        </div>
+
+
+        <div class="analysis">
+
+
+            <div class="card">
+
+                <div class="label">
+                    السعر
+                </div>
+
+                <div
+                    class="big"
+                    id="mPrice"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="label">
+                    نسبة التغير
+                </div>
+
+                <div
+                    class="big"
+                    id="mPct"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="label">
+                    الحجم
+                </div>
+
+                <div
+                    class="big"
+                    id="mVol"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="label">
+                    نطاق 52 أسبوع
+                </div>
+
+                <div
+                    class="big"
+                    id="m52"
+                >
+                    --
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="card"
+            style="margin-top:14px"
+        >
+
+            <div class="metric">
+
+                <span>
+                    السعر
+                </span>
+
+                <b id="mPrice2">
+                    --
+                </b>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>
+                    أعلى 52 أسبوع
+                </span>
+
+                <b id="mHigh">
+                    --
+                </b>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>
+                    أدنى 52 أسبوع
+                </span>
+
+                <b id="mLow">
+                    --
+                </b>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>
+                    القيمة المتداولة
+                </span>
+
+                <b id="mTurnover">
+                    --
+                </b>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 <script>
-"use strict";
 
-let stocks = [];
-let sortColumn = "";
-let sortAscending = true;
+/* =========================================================
+   STOCK LIST
+========================================================= */
 
-const format = value =>
-  Number(value || 0).toLocaleString("en-US", {
-    maximumFractionDigits: 2
-  });
+const STOCKS = [
 
-function updateClock(){
-  document.getElementById("clock").textContent =
-    new Date().toLocaleString("ar-SA", {
-      timeZone:"Asia/Riyadh",
-      dateStyle:"medium",
-      timeStyle:"short"
-    });
-}
+    ["2222", "أرامكو السعودية"],
+    ["1120", "مصرف الراجحي"],
+    ["1150", "مصرف الإنماء"],
+    ["1180", "البنك الأهلي السعودي"],
+    ["2010", "سابك"],
+    ["2020", "سابك للمغذيات الزراعية"],
+    ["2030", "المصافي"],
+    ["2040", "الخزف السعودي"],
+    ["2060", "التصنيع"],
+    ["2082", "أكوا باور"],
+    ["2280", "المراعي"],
+    ["2310", "سبكيم العالمية"],
+    ["2350", "كيمانول"],
+    ["2380", "بترو رابغ"],
+    ["2381", "الحبيب"],
+    ["2382", "بدجت السعودية"],
+    ["3003", "أسمنت المدينة"],
+    ["4003", "إكسترا"],
+    ["4013", "سليمان الحبيب"],
+    ["4190", "جرير"],
+    ["4240", "الحكير"],
+    ["4260", "بدجت"],
+    ["4280", "المملكة القابضة"],
+    ["5110", "الكهرباء السعودية"],
+    ["6004", "كاتريون"],
+    ["7010", "stc"],
+    ["7020", "اتحاد اتصالات"],
+    ["7030", "زين السعودية"],
+    ["7201", "بحر العرب"],
+    ["7202", "سلوشنز"],
+    ["7203", "علم"],
+    ["7204", "توبان"],
+    ["1211", "معادن"],
+    ["1303", "أسمنت السعودية"],
+    ["1304", "اليمامة للحديد"],
+    ["1320", "أنابيب السعودية"],
+    ["1830", "لجام للرياضة"],
+    ["1831", "مهارة"],
+    ["1832", "صدر"],
+    ["4002", "المواساة"],
+    ["4004", "دله الصحية"],
+    ["4005", "رعاية"],
+    ["4008", "ساكو"],
+    ["4061", "أنابيب الشرق"],
+    ["4164", "النهدي"],
+    ["4261", "ذيب"],
+    ["4290", "الخدمات الأرضية"],
+    ["4321", "سينومي سنترز"],
+    ["4322", "رتال"],
+    ["4323", "سمو"],
+    ["4330", "الرياض للتعمير"],
+    ["4331", "مدينة المعرفة"]
 
-function escapeHTML(value){
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  })[char]);
-}
+];
 
-function updateDashboard(){
 
-  const volume = stocks.reduce(
-    (sum,item) => sum + Number(item.volume || 0),0
-  );
+/* =========================================================
+   GLOBAL DATA
+========================================================= */
 
-  const amount = stocks.reduce(
-    (sum,item) => sum + Number(item.value || 0),0
-  );
+let data = [];
 
-  const rising = stocks.filter(
-    item => Number(item.change || 0) > 0
-  ).length;
 
-  document.getElementById("count").textContent =
-    format(stocks.length);
+let watch =
+    JSON.parse(
+        localStorage.getItem(
+            "saudiWatch"
+        ) || "[]"
+    );
 
-  document.getElementById("volume").textContent =
-    format(volume);
 
-  document.getElementById("amount").textContent =
-    format(amount);
+/* =========================================================
+   FALLBACK
+========================================================= */
 
-  document.getElementById("up").textContent =
-    format(rising);
+const FALLBACK = {
 
-  document.getElementById("resultCount").textContent =
-    "عدد الشركات: " + stocks.length;
+    "2222": 25.50,
+    "1120": 95.50,
+    "1150": 29.80,
+    "1180": 32.40,
+    "2010": 65.20,
+    "2082": 210,
+    "2280": 55.50,
+    "4190": 14.20,
+    "7010": 43.20,
+    "7203": 103
 
-  renderTable();
-}
+};
 
-function renderTable(){
 
-  const query = document.getElementById("search")
-    .value.toLowerCase();
+/* =========================================================
+   NAVIGATION
+========================================================= */
 
-  let filtered = stocks.filter(item =>
-    String(item.name || "").toLowerCase().includes(query) ||
-    String(item.symbol || "").toLowerCase().includes(query)
-  );
+function tab(
+    id,
+    button
+) {
 
-  if(sortColumn){
-    filtered.sort((a,b)=>{
-      let x = a[sortColumn] ?? "";
-      let y = b[sortColumn] ?? "";
-
-      if(!isNaN(Number(x)) && !isNaN(Number(y))){
-        x = Number(x);
-        y = Number(y);
-      }else{
-        x = String(x).toLowerCase();
-        y = String(y).toLowerCase();
-      }
-
-      if(x < y) return sortAscending ? -1 : 1;
-      if(x > y) return sortAscending ? 1 : -1;
-      return 0;
-    });
-  }
-
-  const tbody = document.getElementById("stocks");
-
-  if(filtered.length === 0){
-    tbody.innerHTML =
-      '<tr><td colspan="8" class="empty">لا توجد نتائج مطابقة</td></tr>';
-  }else{
-    tbody.innerHTML = filtered.map(item=>{
-      const change = Number(item.change || 0);
-
-      return `
-        <tr>
-          <td class="symbol">${escapeHTML(item.symbol)}</td>
-          <td class="company">${escapeHTML(item.name)}</td>
-          <td>${format(item.price)}</td>
-          <td class="${change > 0 ? "green" : change < 0 ? "red" : ""}">
-            ${format(change)}%
-          </td>
-          <td>${format(item.volume)}</td>
-          <td>${format(item.value)}</td>
-          <td>${format(item.eps)}</td>
-          <td>${format(item.pe)}</td>
-        </tr>
-      `;
-    }).join("");
-  }
-
-  document.getElementById("resultCount").textContent =
-    "عدد النتائج: " + filtered.length;
-}
-
-document.getElementById("search")
-  .addEventListener("input",renderTable);
-
-document.getElementById("importButton")
-  .addEventListener("click",()=>{
-    document.getElementById("csv").click();
-  });
-
-document.querySelectorAll("th[data-sort]")
-  .forEach(th=>{
-    th.addEventListener("click",()=>{
-      const column = th.dataset.sort;
-
-      if(sortColumn === column){
-        sortAscending = !sortAscending;
-      }else{
-        sortColumn = column;
-        sortAscending = true;
-      }
-
-      renderTable();
-    });
-  });
-
-document.getElementById("csv")
-  .addEventListener("change",async event=>{
-
-    const file = event.target.files[0];
-    if(!file) return;
-
-    try{
-      const content = (await file.text())
-        .replace(/^\uFEFF/,"").trim();
-
-      const lines = content.split(/\r?\n/);
-      const headers = lines.shift()
-        .split(",").map(x=>x.trim().toLowerCase());
-
-      const required = [
-        "symbol","name","price","change",
-        "volume","value","eps","pe"
-      ];
-
-      if(!required.every(x=>headers.includes(x))){
-        throw new Error(
-          "أسماء الأعمدة المطلوبة: " + required.join(", ")
+    document
+        .querySelectorAll(
+            ".section"
+        )
+        .forEach(
+            section =>
+                section.classList.remove(
+                    "active"
+                )
         );
-      }
 
-      stocks = lines.filter(Boolean).map(line=>{
-        const cells = line.split(",");
-        return Object.fromEntries(
-          headers.map((header,index)=>[
-            header,(cells[index] || "").trim()
-          ])
+
+    document
+        .getElementById(id)
+        .classList.add(
+            "active"
         );
-      });
 
-      updateDashboard();
 
-      document.getElementById("notice").textContent =
-        "تم استيراد " + stocks.length +
-        " شركة بنجاح. البيانات مصدرها الملف الذي اخترته.";
+    document
+        .querySelectorAll(
+            "nav button"
+        )
+        .forEach(
+            btn =>
+                btn.classList.remove(
+                    "active"
+                )
+        );
 
-      document.getElementById("lastUpdate").textContent =
-        "آخر تحديث: " +
-        new Date().toLocaleString("ar-SA",{
-          timeZone:"Asia/Riyadh"
-        });
 
-    }catch(error){
-      alert(error.message);
+    button.classList.add(
+        "active"
+    );
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function setStatus(
+    text,
+    state = "ok"
+) {
+
+    document.getElementById(
+        "status"
+    ).textContent =
+        text;
+
+
+    document.getElementById(
+        "dot"
+    ).style.background =
+        state === "bad"
+            ? "#ef5350"
+            : state === "wait"
+                ? "#f5b942"
+                : "#20c978";
+
+}
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function fmt(
+    value,
+    decimals = 2
+) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        Number.isNaN(
+            Number(value)
+        )
+    ) {
+
+        return "--";
+
     }
-  });
 
-updateClock();
-setInterval(updateClock,60000);
+
+    return Number(value)
+        .toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits:
+                    decimals,
+
+                maximumFractionDigits:
+                    decimals
+            }
+        );
+
+}
+
+
+function compact(
+    value
+) {
+
+    if (!value) {
+
+        return "--";
+
+    }
+
+
+    return Intl.NumberFormat(
+        "en-US",
+        {
+            notation: "compact",
+            maximumFractionDigits: 2
+        }
+    ).format(
+        value
+    );
+
+}
+
+
+function pctClass(
+    value
+) {
+
+    return Number(value) >= 0
+        ? "green"
+        : "red";
+
+}
+
+
+function esc(
+    value
+) {
+
+    return String(value)
+        .replace(
+            /[&<>"']/g,
+            function(match) {
+
+                return {
+
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#039;"
+
+                }[match];
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   YAHOO FINANCE
+========================================================= */
+
+async function yahoo(
+    symbol
+) {
+
+    const url =
+        "https://query1.finance.yahoo.com/v8/finance/chart/"
+        +
+        encodeURIComponent(symbol)
+        +
+        "?range=1y&interval=1d&events=div%2Csplits";
+
+
+    const response =
+        await fetch(
+            url,
+            {
+                cache: "no-store"
+            }
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "HTTP " +
+            response.status
+        );
+
+    }
+
+
+    const json =
+        await response.json();
+
+
+    const result =
+        json.chart &&
+        json.chart.result &&
+        json.chart.result[0];
+
+
+    if (!result) {
+
+        throw new Error(
+            "No data"
+        );
+
+    }
+
+
+    const quote =
+        result.indicators &&
+        result.indicators.quote &&
+        result.indicators.quote[0];
+
+
+    if (!quote) {
+
+        throw new Error(
+            "No quote data"
+        );
+
+    }
+
+
+    const closes =
+        quote.close || [];
+
+
+    let index =
+        closes.length - 1;
+
+
+    while (
+        index >= 0 &&
+        closes[index] == null
+    ) {
+
+        index--;
+
+    }
+
+
+    if (index < 0) {
+
+        throw new Error(
+            "No closing price"
+        );
+
+    }
+
+
+    const price =
+        Number(
+            closes[index]
+        );
+
+
+    const previous =
+        index > 0
+            ? Number(
+                closes[index - 1]
+            )
+            : price;
+
+
+    const change =
+        price -
+        previous;
+
+
+    const changePct =
+        previous
+            ? (
+                change /
+                previous
+            ) * 100
+            : 0;
+
+
+    const last252 =
+        closes
+            .filter(
+                value =>
+                    Number.isFinite(
+                        Number(value)
+                    )
+            )
+            .slice(-252);
+
+
+    const high52 =
+        last252.length
+            ? Math.max(
+                ...last252
+            )
+            : price;
+
+
+    const low52 =
+        last252.length
+            ? Math.min(
+                ...last252
+            )
+            : price;
+
+
+    const volumeArray =
+        quote.volume || [];
+
+
+    const volume =
+        Number(
+            volumeArray[index] || 0
+        );
+
+
+    const symbolClean =
+        symbol
+            .replace(
+                ".SR",
+                ""
+            );
+
+
+    const stockInfo =
+        STOCKS.find(
+            item =>
+                item[0] ===
+                symbolClean
+        );
+
+
+    return {
+
+        symbol:
+            symbolClean,
+
+        name:
+            stockInfo
+                ? stockInfo[1]
+                : symbolClean,
+
+        price,
+
+        previous,
+
+        change,
+
+        changePct,
+
+        volume,
+
+        turnover:
+            price * volume,
+
+        high52,
+
+        low52,
+
+        timestamp:
+            result.meta &&
+            result.meta.regularMarketTime
+                ? new Date(
+                    result.meta
+                        .regularMarketTime
+                        * 1000
+                )
+                : new Date()
+
+    };
+
+}
+
+
+/* =========================================================
+   LOAD ONE STOCK
+========================================================= */
+
+async function loadOne(
+    ticker,
+    name
+) {
+
+    try {
+
+        return await yahoo(
+            ticker + ".SR"
+        );
+
+    } catch (error) {
+
+        console.warn(
+            ticker,
+            error
+        );
+
+
+        /*
+         * Fallback only for
+         * a few known stocks.
+         */
+
+        const fallback =
+            FALLBACK[ticker];
+
+
+        if (
+            fallback !== undefined
+        ) {
+
+            return {
+
+                symbol: ticker,
+
+                name,
+
+                price: fallback,
+
+                previous: fallback,
+
+                change: 0,
+
+                changePct: 0,
+
+                volume: 0,
+
+                turnover: 0,
+
+                high52: fallback,
+
+                low52: fallback,
+
+                timestamp: new Date(),
+
+                fallback: true
+
+            };
+
+        }
+
+
+        return null;
+
+    }
+
+}
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+async function refresh() {
+
+    setStatus(
+        "جاري تحميل الأسعار...",
+        "wait"
+    );
+
+
+    const output = [];
+
+
+    /*
+     * We intentionally use small batches.
+     * This reduces the chance of hitting
+     * public endpoint limits.
+     */
+
+    for (
+        let i = 0;
+        i < STOCKS.length;
+        i += 8
+    ) {
+
+        const batch =
+            STOCKS.slice(
+                i,
+                i + 8
+            );
+
+
+        const results =
+            await Promise.all(
+                batch.map(
+                    item =>
+                        loadOne(
+                            item[0],
+                            item[1]
+                        )
+                )
+            );
+
+
+        output.push(
+            ...results.filter(
+                Boolean
+            )
+        );
+
+
+        /*
+         * Show partial results immediately.
+         */
+
+        data = output;
+
+        renderStocks(
+            output
+        );
+
+        renderTop();
+
+        renderWatch();
+
+        stats();
+
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    150
+                )
+        );
+
+    }
+
+
+    data = output;
+
+
+    renderStocks();
+
+    renderTop();
+
+    renderWatch();
+
+    stats();
+
+
+    document.getElementById(
+        "last"
+    ).textContent =
+        riyadhTime();
+
+
+    document.getElementById(
+        "loaded"
+    ).textContent =
+        data.length;
+
+
+    if (data.length) {
+
+        setStatus(
+            "متصل — Yahoo Finance",
+            "ok"
+        );
+
+    } else {
+
+        setStatus(
+            "تعذر تحميل البيانات",
+            "bad"
+        );
+
+        showAlert(
+            "لم يتم تحميل بيانات الأسعار. قد يكون المصدر العام يمنع الطلبات المباشرة من المتصفح."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER STOCKS
+========================================================= */
+
+function renderStocks(
+    source = data
+) {
+
+    const tbody =
+        document.getElementById(
+            "stocks"
+        );
+
+
+    if (!tbody) {
+
+        return;
+
+    }
+
+
+    const query =
+        (
+            document.getElementById(
+                "search"
+            )?.value || ""
+        )
+        .toLowerCase()
+        .trim();
+
+
+    let stocks =
+        source.filter(
+            stock =>
+
+                stock.name
+                    .toLowerCase()
+                    .includes(
+                        query
+                    )
+
+                ||
+
+                stock.symbol
+                    .includes(
+                        query
+                    )
+
+        );
+
+
+    const sort =
+        document.getElementById(
+            "sort"
+        )?.value ||
+        "symbol";
+
+
+    if (
+        sort === "symbol"
+    ) {
+
+        stocks.sort(
+            (a, b) =>
+                a.symbol.localeCompare(
+                    b.symbol
+                )
+        );
+
+    }
+
+
+    if (
+        sort === "price"
+    ) {
+
+        stocks.sort(
+            (a, b) =>
+                b.price -
+                a.price
+        );
+
+    }
+
+
+    if (
+        sort === "changePct"
+    ) {
+
+        stocks.sort(
+            (a, b) =>
+                b.changePct -
+                a.changePct
+        );
+
+    }
+
+
+    if (
+        sort === "volume"
+    ) {
+
+        stocks.sort(
+            (a, b) =>
+                b.volume -
+                a.volume
+        );
+
+    }
+
+
+    if (!stocks.length) {
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="9"
+                    class="loading"
+                >
+                    لا توجد بيانات
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML =
+        stocks.map(
+            stock => {
+
+                const favorite =
+                    watch.includes(
+                        stock.symbol
+                    );
+
+
+                return `
+
+                    <tr>
+
+                        <td>
+
+                            <span
+                                class="star ${
+                                    favorite
+                                        ? "on"
+                                        : ""
+                                }"
+                                onclick="
+                                    toggleWatch(
+                                        '${stock.symbol}'
+                                    )
+                                "
+                            >
+                                ★
+                            </span>
+
+                        </td>
+
+
+                        <td class="symbol">
+
+                            ${esc(
+                                stock.symbol
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${esc(
+                                stock.name
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${fmt(
+                                stock.price
+                            )}
+
+                        </td>
+
+
+                        <td class="${
+                            pctClass(
+                                stock.change
+                            )
+                        }">
+
+                            ${fmt(
+                                stock.change
+                            )}
+
+                        </td>
+
+
+                        <td class="${
+                            pctClass(
+                                stock.changePct
+                            )
+                        }">
+
+                            ${fmt(
+                                stock.changePct
+                            )}%
+
+                        </td>
+
+
+                        <td>
+
+                            ${compact(
+                                stock.volume
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${compact(
+                                stock.turnover
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="
+                                    badge
+                                    ${
+                                        stock.changePct >= 0
+                                            ? "g"
+                                            : "r"
+                                    }
+                                "
+                            >
+
+                                ${
+                                    stock.changePct >= 0
+                                        ? "إيجابي"
+                                        : "سلبي"
+                                }
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =========================================================
+   TOP STOCKS
+========================================================= */
+
+function renderTop() {
+
+    const tbody =
+        document.getElementById(
+            "top"
+        );
+
+
+    const top =
+        [...data]
+            .sort(
+                (a, b) =>
+                    Math.abs(
+                        b.changePct
+                    )
+                    -
+                    Math.abs(
+                        a.changePct
+                    )
+            )
+            .slice(
+                0,
+                12
+            );
+
+
+    if (!top.length) {
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="loading"
+                >
+                    لا توجد بيانات
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML =
+        top.map(
+            stock => `
+
+                <tr>
+
+                    <td class="symbol">
+
+                        ${esc(
+                            stock.symbol
+                        )}
+
+                    </td>
+
+
+                    <td>
+
+                        ${fmt(
+                            stock.price
+                        )}
+
+                    </td>
+
+
+                    <td class="${
+                        pctClass(
+                            stock.change
+                        )
+                    }">
+
+                        ${fmt(
+                            stock.change
+                        )}
+
+                    </td>
+
+
+                    <td class="${
+                        pctClass(
+                            stock.changePct
+                        )
+                    }">
+
+                        ${fmt(
+                            stock.changePct
+                        )}%
+
+                    </td>
+
+
+                    <td>
+
+                        ${compact(
+                            stock.volume
+                        )}
+
+                    </td>
+
+
+                    <td>
+
+                        <span
+                            class="
+                                badge
+                                ${
+                                    stock.changePct >= 0
+                                        ? "g"
+                                        : "r"
+                                }
+                            "
+                        >
+
+                            ${
+                                stock.changePct >= 0
+                                    ? "صاعد"
+                                    : "هابط"
+                            }
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+            `
+        ).join("");
+
+}
+
+
+/* =========================================================
+   WATCHLIST
+========================================================= */
+
+function toggleWatch(
+    symbol
+) {
+
+    if (
+        watch.includes(
+            symbol
+        )
+    ) {
+
+        watch =
+            watch.filter(
+                x =>
+                    x !== symbol
+            );
+
+    } else {
+
+        watch.push(
+            symbol
+        );
+
+    }
+
+
+    localStorage.setItem(
+        "saudiWatch",
+        JSON.stringify(
+            watch
+        )
+    );
+
+
+    renderStocks();
+
+    renderWatch();
+
+}
+
+
+/* =========================================================
+   WATCHLIST RENDER
+========================================================= */
+
+function renderWatch() {
+
+    const tbody =
+        document.getElementById(
+            "watch"
+        );
+
+
+    const selected =
+        watch
+            .map(
+                symbol =>
+                    data.find(
+                        stock =>
+                            stock.symbol ===
+                            symbol
+                    )
+            )
+            .filter(
+                Boolean
+            );
+
+
+    if (!selected.length) {
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="loading"
+                >
+                    لم تتم إضافة أسهم
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML =
+        selected.map(
+            stock => `
+
+                <tr>
+
+                    <td class="symbol">
+
+                        ${esc(
+                            stock.symbol
+                        )}
+
+                        —
+                        ${esc(
+                            stock.name
+                        )}
+
+                    </td>
+
+
+                    <td>
+
+                        ${fmt(
+                            stock.price
+                        )}
+
+                    </td>
+
+
+                    <td class="${
+                        pctClass(
+                            stock.changePct
+                        )
+                    }">
+
+                        ${fmt(
+                            stock.changePct
+                        )}%
+
+                    </td>
+
+
+                    <td>
+
+                        ${compact(
+                            stock.volume
+                        )}
+
+                    </td>
+
+
+                    <td>
+
+                        <button
+                            class="btn"
+                            onclick="
+                                openAnalysis(
+                                    '${stock.symbol}'
+                                )
+                            "
+                        >
+                            تحليل
+                        </button>
+
+                    </td>
+
+
+                    <td>
+
+                        <button
+                            class="btn danger"
+                            onclick="
+                                toggleWatch(
+                                    '${stock.symbol}'
+                                )
+                            "
+                        >
+                            حذف
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `
+        ).join("");
+
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+function stats() {
+
+    document.getElementById(
+        "count"
+    ).textContent =
+        data.length;
+
+
+    document.getElementById(
+        "gainers"
+    ).textContent =
+        data.filter(
+            stock =>
+                stock.changePct > 0
+        ).length;
+
+
+    document.getElementById(
+        "losers"
+    ).textContent =
+        data.filter(
+            stock =>
+                stock.changePct < 0
+        ).length;
+
+
+    /*
+     * TASI
+     */
+
+    yahoo(
+        "^TASI.SR"
+    )
+        .then(
+            stock => {
+
+                document.getElementById(
+                    "tasi"
+                ).textContent =
+                    fmt(
+                        stock.price
+                    );
+
+
+                const change =
+                    document.getElementById(
+                        "tasiChange"
+                    );
+
+
+                change.textContent =
+
+                    `${fmt(
+                        stock.change
+                    )}
+                    (
+                    ${fmt(
+                        stock.changePct
+                    )}%
+                    )`;
+
+
+                change.className =
+                    pctClass(
+                        stock.changePct
+                    );
+
+            }
+        )
+        .catch(
+            () => {
+
+                document.getElementById(
+                    "tasi"
+                ).textContent =
+                    "--";
+
+
+                document.getElementById(
+                    "tasiChange"
+                ).textContent =
+                    "بيانات المؤشر غير متاحة";
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   ANALYSIS
+========================================================= */
+
+function openAnalysis(
+    symbol
+) {
+
+    const stock =
+        data.find(
+            item =>
+                item.symbol ===
+                symbol
+        );
+
+
+    if (!stock) {
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "mTitle"
+    ).textContent =
+        `${stock.name} (${stock.symbol})`;
+
+
+    document.getElementById(
+        "mPrice"
+    ).textContent =
+        fmt(
+            stock.price
+        );
+
+
+    const pct =
+        document.getElementById(
+            "mPct"
+        );
+
+
+    pct.textContent =
+        `${fmt(
+            stock.changePct
+        )}%`;
+
+
+    pct.className =
+        `big ${
+            pctClass(
+                stock.changePct
+            )
+        }`;
+
+
+    document.getElementById(
+        "mVol"
+    ).textContent =
+        compact(
+            stock.volume
+        );
+
+
+    document.getElementById(
+        "m52"
+    ).textContent =
+        `${fmt(
+            stock.low52
+        )} — ${fmt(
+            stock.high52
+        )}`;
+
+
+    document.getElementById(
+        "mPrice2"
+    ).textContent =
+        fmt(
+            stock.price
+        );
+
+
+    document.getElementById(
+        "mHigh"
+    ).textContent =
+        fmt(
+            stock.high52
+        );
+
+
+    document.getElementById(
+        "mLow"
+    ).textContent =
+        fmt(
+            stock.low52
+        );
+
+
+    document.getElementById(
+        "mTurnover"
+    ).textContent =
+        compact(
+            stock.turnover
+        );
+
+
+    document.getElementById(
+        "modal"
+    ).classList.add(
+        "open"
+    );
+
+}
+
+
+function closeModal() {
+
+    document.getElementById(
+        "modal"
+    ).classList.remove(
+        "open"
+    );
+
+}
+
+
+window.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            event.target.id ===
+            "modal"
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   GRAHAM
+========================================================= */
+
+function graham() {
+
+    const eps =
+        Number(
+            document.getElementById(
+                "eps"
+            ).value
+        );
+
+
+    const growth =
+        Number(
+            document.getElementById(
+                "growth"
+            ).value
+        );
+
+
+    if (
+        !eps ||
+        growth < 0
+    ) {
+
+        alert(
+            "أدخل EPS والنمو"
+        );
+
+        return;
+
+    }
+
+
+    const value =
+        eps *
+        (
+            8.5 +
+            2 * growth
+        );
+
+
+    document.getElementById(
+        "grahamResult"
+    ).textContent =
+        fmt(
+            value
+        );
+
+}
+
+
+/* =========================================================
+   DCF
+========================================================= */
+
+function dcf() {
+
+    const fcf =
+        Number(
+            document.getElementById(
+                "fcf"
+            ).value
+        );
+
+
+    const growth =
+        Number(
+            document.getElementById(
+                "dcfg"
+            ).value
+        ) / 100;
+
+
+    const discount =
+        Number(
+            document.getElementById(
+                "discount"
+            ).value
+        ) / 100;
+
+
+    const terminal =
+        Number(
+            document.getElementById(
+                "terminal"
+            ).value
+        ) / 100;
+
+
+    const shares =
+        Number(
+            document.getElementById(
+                "shares"
+            ).value
+        );
+
+
+    if (
+        !fcf ||
+        !shares ||
+        discount <= terminal
+    ) {
+
+        alert(
+            "تحقق من المدخلات. يجب أن يكون Discount Rate أكبر من Terminal Growth."
+        );
+
+        return;
+
+    }
+
+
+    let pv = 0;
+
+    let current =
+        fcf;
+
+
+    for (
+        let year = 1;
+        year <= 5;
+        year++
+    ) {
+
+        current *=
+            1 + growth;
+
+
+        pv +=
+            current /
+            Math.pow(
+                1 + discount,
+                year
+            );
+
+    }
+
+
+    const terminalValue =
+        current *
+        (
+            1 + terminal
+        )
+        /
+        (
+            discount -
+            terminal
+        );
+
+
+    const terminalPV =
+        terminalValue /
+        Math.pow(
+            1 + discount,
+            5
+        );
+
+
+    const fairValue =
+        (
+            pv +
+            terminalPV
+        )
+        /
+        shares;
+
+
+    document.getElementById(
+        "dcfResult"
+    ).textContent =
+        fmt(
+            fairValue
+        );
+
+}
+
+
+/* =========================================================
+   IMPORT / EXPORT
+========================================================= */
+
+function exportCSV() {
+
+    const csv =
+        "symbol\n" +
+        watch.join(
+            "\n"
+        );
+
+
+    const blob =
+        new Blob(
+            [
+                "\ufeff" +
+                csv
+            ],
+            {
+                type:
+                    "text/csv;charset=utf-8"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        "watchlist.csv";
+
+
+    link.click();
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+
+function importCSV() {
+
+    const file =
+        document.getElementById(
+            "csvFile"
+        ).files[0];
+
+
+    if (!file) {
+
+        alert(
+            "اختر ملف CSV"
+        );
+
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        function(event) {
+
+            const rows =
+                event.target.result
+                    .split(
+                        /\r?\n/
+                    )
+                    .slice(1)
+                    .map(
+                        row =>
+                            row
+                                .split(
+                                    ","
+                                )[0]
+                                .trim()
+                    )
+                    .filter(
+                        Boolean
+                    );
+
+
+            watch =
+                [
+                    ...new Set(
+                        rows
+                    )
+                ];
+
+
+            localStorage.setItem(
+                "saudiWatch",
+                JSON.stringify(
+                    watch
+                )
+            );
+
+
+            renderStocks();
+
+            renderWatch();
+
+        };
+
+
+    reader.readAsText(
+        file
+    );
+
+}
+
+
+function clearWatch() {
+
+    if (
+        !confirm(
+            "هل تريد حذف جميع الأسهم من المفضلة؟"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    watch = [];
+
+
+    localStorage.removeItem(
+        "saudiWatch"
+    );
+
+
+    renderStocks();
+
+    renderWatch();
+
+}
+
+
+/* =========================================================
+   TIME
+========================================================= */
+
+function riyadhTime() {
+
+    return new Date()
+        .toLocaleString(
+            "ar-SA",
+            {
+                timeZone:
+                    "Asia/Riyadh",
+
+                dateStyle:
+                    "medium",
+
+                timeStyle:
+                    "medium"
+            }
+        );
+
+}
+
+
+function updateClock() {
+
+    document.getElementById(
+        "clock"
+    ).textContent =
+        riyadhTime();
+
+}
+
+
+setInterval(
+    updateClock,
+    1000
+);
+
+
+/* =========================================================
+   ALERT
+========================================================= */
+
+function showAlert(
+    message
+) {
+
+    const alert =
+        document.getElementById(
+            "alert"
+        );
+
+
+    alert.textContent =
+        message;
+
+
+    alert.style.display =
+        "block";
+
+
+    setTimeout(
+        () => {
+
+            alert.style.display =
+                "none";
+
+        },
+        6000
+    );
+
+}
+
+
+/* =========================================================
+   AUTO REFRESH
+========================================================= */
+
+setInterval(
+    refresh,
+    60000
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        updateClock();
+
+        renderStocks(
+            []
+        );
+
+        renderTop();
+
+        renderWatch();
+
+        refresh();
+
+    }
+);
 
 </script>
 

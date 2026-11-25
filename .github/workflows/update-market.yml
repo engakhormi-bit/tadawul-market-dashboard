@@ -1,4 +1,3 @@
-
 name: Update Saudi Market Data
 
 on:
@@ -17,7 +16,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
@@ -28,6 +27,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Refresh main-market company directory
+        env:
+          Q4_API_KEY: ${{ secrets.Q4_API_KEY }}
+        run: python scripts/fetch_companies.py
+
       - name: Fetch market data
         run: python scripts/fetch_data.py
 
@@ -36,11 +40,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add data/market.json
+          git add data/market.json data/companies.json
 
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Update Saudi market data"
+            git commit -m "Update Saudi main-market data"
             git push
           fi

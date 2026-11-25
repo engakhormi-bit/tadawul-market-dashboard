@@ -1,0 +1,28 @@
+{
+  "updated_at": null,
+  "source": "Initial fallback list",
+  "market": "main",
+  "count": 20,
+  "companies": [
+    {"symbol":"2222","name":"أرامكو السعودية","name_en":"Saudi Aramco","sector":"energy","market":"main","status":"active","is_etf":false},
+    {"symbol":"1120","name":"مصرف الراجحي","name_en":"Al Rajhi Bank","sector":"banks","market":"main","status":"active","is_etf":false},
+    {"symbol":"1180","name":"البنك الأهلي السعودي","name_en":"Saudi National Bank","sector":"banks","market":"main","status":"active","is_etf":false},
+    {"symbol":"1150","name":"مصرف الإنماء","name_en":"Alinma Bank","sector":"banks","market":"main","status":"active","is_etf":false},
+    {"symbol":"1211","name":"معادن","name_en":"Ma'aden","sector":"materials","market":"main","status":"active","is_etf":false},
+    {"symbol":"2083","name":"مرافق","name_en":"Marafiq","sector":"utilities","market":"main","status":"active","is_etf":false},
+    {"symbol":"4143","name":"تالكو","name_en":"Talco","sector":"materials","market":"main","status":"active","is_etf":false},
+    {"symbol":"4017","name":"فقيه الطبية","name_en":"Fakeeh Care","sector":"healthcare","market":"main","status":"active","is_etf":false},
+    {"symbol":"2285","name":"المطاحن العربية","name_en":"Arabian Mills","sector":"food","market":"main","status":"active","is_etf":false},
+    {"symbol":"2310","name":"سبكيم العالمية","name_en":"Sipchem","sector":"materials","market":"main","status":"active","is_etf":false},
+    {"symbol":"4190","name":"جرير","name_en":"Jarir Marketing","sector":"retailing","market":"main","status":"active","is_etf":false},
+    {"symbol":"8210","name":"بوبا العربية","name_en":"Bupa Arabia","sector":"insurance","market":"main","status":"active","is_etf":false},
+    {"symbol":"8010","name":"التعاونية","name_en":"Tawuniya","sector":"insurance","market":"main","status":"active","is_etf":false},
+    {"symbol":"2370","name":"مسك","name_en":"MESC","sector":"capital_goods","market":"main","status":"active","is_etf":false},
+    {"symbol":"4260","name":"بدجت السعودية","name_en":"Budget Saudi","sector":"consumer_services","market":"main","status":"active","is_etf":false},
+    {"symbol":"4031","name":"الخدمات الأرضية","name_en":"Saudi Ground Services","sector":"transportation","market":"main","status":"active","is_etf":false},
+    {"symbol":"2280","name":"المراعي","name_en":"Almarai","sector":"food","market":"main","status":"active","is_etf":false},
+    {"symbol":"7010","name":"stc","name_en":"stc","sector":"telecom","market":"main","status":"active","is_etf":false},
+    {"symbol":"2380","name":"بترو رابغ","name_en":"Petro Rabigh","sector":"energy","market":"main","status":"active","is_etf":false},
+    {"symbol":"4001","name":"أسواق العثيم","name_en":"Abdullah Al Othaim Markets","sector":"retailing","market":"main","status":"active","is_etf":false}
+  ]
+}

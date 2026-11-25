@@ -1,3266 +1,476 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Saudi Stocks Dashboard</title>
-
-    <style>
-        :root {
-            --bg: #08111f;
-            --card: #101b2d;
-            --card2: #162338;
-            --line: #26364e;
-            --text: #f4f7fb;
-            --muted: #91a0b5;
-            --green: #20c978;
-            --red: #ef5350;
-            --blue: #4d8dff;
-            --yellow: #f5b942;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Tahoma, Arial, sans-serif;
-        }
-
-        .container {
-            width: min(1450px, 95%);
-            margin: auto;
-        }
-
-        header {
-            border-bottom: 1px solid var(--line);
-            background: #0b1526;
-            padding: 22px 0;
-        }
-
-        .head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .brand h1 {
-            margin: 0;
-            font-size: 25px;
-        }
-
-        .brand p {
-            margin: 7px 0 0;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .status {
-            font-size: 13px;
-            color: var(--muted);
-        }
-
-        .dot {
-            display: inline-block;
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--yellow);
-            margin-left: 7px;
-        }
-
-        nav {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin: 18px 0;
-        }
-
-        nav button,
-        .btn {
-            border: 1px solid var(--line);
-            background: var(--card);
-            color: var(--text);
-            padding: 10px 15px;
-            border-radius: 9px;
-            cursor: pointer;
-        }
-
-        nav button.active,
-        nav button:hover,
-        .primary {
-            background: var(--blue);
-            border-color: var(--blue);
-            color: #fff;
-        }
-
-        .danger {
-            background: #8f2525 !important;
-            border-color: #8f2525 !important;
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .section-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 18px 0 13px;
-        }
-
-        .section-title h2 {
-            margin: 0;
-            font-size: 20px;
-        }
-
-        .grid {
-            display: grid;
-            gap: 14px;
-        }
-
-        .g4 {
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-        .g2 {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            padding: 18px;
-        }
-
-        .label {
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .big {
-            font-size: 27px;
-            font-weight: 700;
-            margin-top: 8px;
-        }
-
-        .green {
-            color: var(--green);
-        }
-
-        .red {
-            color: var(--red);
-        }
-
-        .muted {
-            color: var(--muted);
-        }
-
-        .controls {
-            display: flex;
-            gap: 9px;
-            flex-wrap: wrap;
-            margin-bottom: 14px;
-        }
-
-        input,
-        select {
-            background: var(--card);
-            border: 1px solid var(--line);
-            color: var(--text);
-            padding: 11px 12px;
-            border-radius: 9px;
-            outline: none;
-        }
-
-        input:focus,
-        select:focus {
-            border-color: var(--blue);
-        }
-
-        .table-wrap {
-            overflow: auto;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 950px;
-        }
-
-        th,
-        td {
-            padding: 12px;
-            border-bottom: 1px solid var(--line);
-            text-align: right;
-            font-size: 13px;
-            white-space: nowrap;
-        }
-
-        th {
-            background: #0d1728;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        tr:hover td {
-            background: #ffffff04;
-        }
-
-        .symbol {
-            font-weight: bold;
-            color: #6ea4ff;
-        }
-
-        .star {
-            cursor: pointer;
-            font-size: 18px;
-            color: #53647b;
-        }
-
-        .star.on {
-            color: #ffd43b;
-        }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 20px;
-            background: var(--card2);
-            font-size: 11px;
-        }
-
-        .badge.g {
-            color: var(--green);
-        }
-
-        .badge.r {
-            color: var(--red);
-        }
-
-        .analysis {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-
-        .metric {
-            padding: 11px 0;
-            border-bottom: 1px solid var(--line);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .metric:last-child {
-            border-bottom: 0;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: #000b;
-            z-index: 20;
-            padding: 25px;
-            overflow: auto;
-        }
-
-        .modal.open {
-            display: block;
-        }
-
-        .modal-box {
-            width: min(900px, 96%);
-            margin: 35px auto;
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: 15px;
-            padding: 22px;
-        }
-
-        .modal-head {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .close {
-            font-size: 25px;
-            cursor: pointer;
-            color: var(--muted);
-        }
-
-        .alert {
-            display: none;
-            background: #3a1c1c;
-            border: 1px solid #7d2a2a;
-            color: #ffcaca;
-            padding: 12px;
-            border-radius: 10px;
-            margin: 12px 0;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 35px;
-            color: var(--muted);
-        }
-
-        footer {
-            border-top: 1px solid var(--line);
-            margin-top: 35px;
-            padding: 25px 0;
-            color: var(--muted);
-            font-size: 12px;
-            text-align: center;
-        }
-
-        @media(max-width:1000px) {
-            .g4 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .analysis {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .g2 {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media(max-width:600px) {
-            .g4,
-            .analysis {
-                grid-template-columns: 1fr;
-            }
-
-            .head {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ميزان المرافق | لوحة الأسهم السعودية</title>
+<style>
+:root{
+  --bg:#0b1120;--panel:#131d30;--panel2:#19263b;--line:#26364e;
+  --text:#edf3fc;--muted:#91a2ba;--green:#25c995;--red:#ff647c;
+  --gold:#e9b95c;--blue:#6aa9ff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif}
+header{padding:24px 5%;background:linear-gradient(120deg,#142b42,#101a2c);border-bottom:1px solid var(--line)}
+.header-row{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+h1{margin:0;font-size:25px}
+.subtitle{color:var(--muted);font-size:13px;margin-top:8px}
+.container{max-width:1450px;margin:auto;padding:24px 4%}
+button,input,select{font:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 15px;border-radius:9px}
+button:hover{border-color:var(--blue)}
+button.primary{background:#176a57;border-color:#208d72}
+button:disabled{opacity:.5;cursor:wait}
+.status{font-size:12px;color:var(--muted);margin-top:12px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-left:6px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:17px;min-width:0}
+.card .label{font-size:12px;color:var(--muted)}
+.card .value{font-size:25px;font-weight:bold;margin:12px 0 5px;direction:ltr;text-align:right}
+.card .sub{font-size:12px;color:var(--muted)}
+.green{color:var(--green)!important}.red{color:var(--red)!important}
+.section-title{font-size:18px;margin:26px 0 14px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+input,select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:9px;padding:11px;outline:none}
+input{flex:1;min-width:180px}
+select{min-width:145px}
+.table-wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:13px}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{padding:14px 13px;text-align:right;border-bottom:1px solid var(--line);font-size:13px;white-space:nowrap}
+th{color:var(--muted);font-weight:normal;background:#172338}
+tbody tr:hover{background:#192941}
+.stock-name{font-weight:bold}.symbol{font-size:11px;color:var(--muted);margin-top:5px;direction:ltr;text-align:right}
+.price{font-weight:bold;direction:ltr;text-align:right}
+.badge{font-size:11px;padding:5px 8px;border-radius:6px;background:#26364e}
+.actions{display:flex;gap:6px}
+.small-btn{padding:6px 9px;font-size:12px}
+.star{color:var(--gold)}
+.note{font-size:12px;color:var(--muted);line-height:1.8;margin-top:12px}
+.footer{color:var(--muted);font-size:11px;margin:25px 0;line-height:1.8}
+.modal{display:none;position:fixed;inset:0;background:#000b;z-index:5;align-items:center;justify-content:center;padding:15px}
+.modal-box{width:min(600px,100%);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:22px}
+.modal-head{display:flex;justify-content:space-between;align-items:center}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.modal-grid .card{padding:13px}
+.modal-grid .value{font-size:19px}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.calc label{font-size:12px;color:var(--muted)}
+.calc input{width:100%;margin-top:6px;min-width:0}
+.result{background:#102d2a;border:1px solid #1d5b4d;padding:14px;border-radius:10px;margin-top:12px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.grid{grid-template-columns:1fr 1fr}.card .value{font-size:20px}.container{padding:16px 3%}}
+</style>
 </head>
-
 <body>
 
 <header>
-
-    <div class="container head">
-
-        <div class="brand">
-
-            <h1>
-                Saudi Stocks Dashboard
-            </h1>
-
-            <p>
-                TASI • Saudi Stocks • Valuation • Watchlist
-            </p>
-
-        </div>
-
-        <div class="status">
-
-            <span
-                class="dot"
-                id="dot"
-            ></span>
-
-            <span id="status">
-                جاري التحميل...
-            </span>
-
-        </div>
-
+  <div class="header-row">
+    <div>
+      <h1>ميزان المرافق</h1>
+      <div class="subtitle">لوحة متابعة وتحليل الأسهم السعودية</div>
     </div>
-
+    <div class="actions">
+      <button class="primary" id="refreshBtn" onclick="refreshAll()">↻ تحديث البيانات</button>
+    </div>
+  </div>
+  <div class="status" id="status"><span class="dot"></span> جارٍ الاتصال بمصدر البيانات...</div>
 </header>
 
-
 <main class="container">
-
-    <!-- NAVIGATION -->
-
-    <nav>
-
-        <button
-            class="active"
-            onclick="tab('overview', this)"
-        >
-            الرئيسية
-        </button>
-
-        <button
-            onclick="tab('stocks', this)"
-        >
-            الأسهم
-        </button>
-
-        <button
-            onclick="tab('watchlist', this)"
-        >
-            المفضلة
-        </button>
-
-        <button
-            onclick="tab('valuation', this)"
-        >
-            التقييم
-        </button>
-
-        <button
-            onclick="tab('settings', this)"
-        >
-            الإعدادات
-        </button>
-
-    </nav>
-
-
-    <div
-        id="alert"
-        class="alert"
-    ></div>
-
-
-    <!-- ======================================================
-         OVERVIEW
-    ======================================================= -->
-
-    <section
-        id="overview"
-        class="section active"
-    >
-
-        <div class="section-title">
-
-            <h2>
-                نظرة عامة
-            </h2>
-
-            <button
-                class="btn primary"
-                onclick="refresh()"
-            >
-                تحديث الآن
-            </button>
-
-        </div>
-
-
-        <div class="grid g4">
-
-            <div class="card">
-
-                <div class="label">
-                    TASI
-                </div>
-
-                <div
-                    class="big"
-                    id="tasi"
-                >
-                    --
-                </div>
-
-                <div id="tasiChange">
-                    --
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="label">
-                    عدد الأسهم
-                </div>
-
-                <div
-                    class="big"
-                    id="count"
-                >
-                    --
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="label">
-                    الرابحون
-                </div>
-
-                <div
-                    class="big green"
-                    id="gainers"
-                >
-                    --
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="label">
-                    الخاسرون
-                </div>
-
-                <div
-                    class="big red"
-                    id="losers"
-                >
-                    --
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="section-title">
-
-            <h2>
-                أبرز الأسهم
-            </h2>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="table-wrap">
-
-                <table>
-
-                    <thead>
-
-                    <tr>
-
-                        <th>
-                            السهم
-                        </th>
-
-                        <th>
-                            السعر
-                        </th>
-
-                        <th>
-                            التغير
-                        </th>
-
-                        <th>
-                            %
-                        </th>
-
-                        <th>
-                            الحجم
-                        </th>
-
-                        <th>
-                            الحالة
-                        </th>
-
-                    </tr>
-
-                    </thead>
-
-
-                    <tbody id="top">
-
-                    <tr>
-
-                        <td
-                            colspan="6"
-                            class="loading"
-                        >
-                            جاري تحميل البيانات...
-                        </td>
-
-                    </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ======================================================
-         STOCKS
-    ======================================================= -->
-
-    <section
-        id="stocks"
-        class="section"
-    >
-
-        <div class="section-title">
-
-            <h2>
-                الأسهم السعودية
-            </h2>
-
-        </div>
-
-
-        <div class="controls">
-
-            <input
-                id="search"
-                placeholder="ابحث بالرمز أو الاسم"
-                oninput="renderStocks()"
-            >
-
-
-            <select
-                id="sort"
-                onchange="renderStocks()"
-            >
-
-                <option value="symbol">
-                    الرمز
-                </option>
-
-                <option value="price">
-                    السعر
-                </option>
-
-                <option value="changePct">
-                    نسبة التغير
-                </option>
-
-                <option value="volume">
-                    الحجم
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="table-wrap">
-
-                <table>
-
-                    <thead>
-
-                    <tr>
-
-                        <th>
-                            ★
-                        </th>
-
-                        <th>
-                            الرمز
-                        </th>
-
-                        <th>
-                            الشركة
-                        </th>
-
-                        <th>
-                            السعر
-                        </th>
-
-                        <th>
-                            التغير
-                        </th>
-
-                        <th>
-                            %
-                        </th>
-
-                        <th>
-                            الحجم
-                        </th>
-
-                        <th>
-                            القيمة
-                        </th>
-
-                        <th>
-                            الحالة
-                        </th>
-
-                    </tr>
-
-                    </thead>
-
-
-                    <tbody id="stocks">
-
-                    <tr>
-
-                        <td
-                            colspan="9"
-                            class="loading"
-                        >
-                            جاري تحميل البيانات...
-                        </td>
-
-                    </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ======================================================
-         WATCHLIST
-    ======================================================= -->
-
-    <section
-        id="watchlist"
-        class="section"
-    >
-
-        <div class="section-title">
-
-            <h2>
-                Watchlist
-            </h2>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="table-wrap">
-
-                <table>
-
-                    <thead>
-
-                    <tr>
-
-                        <th>
-                            السهم
-                        </th>
-
-                        <th>
-                            السعر
-                        </th>
-
-                        <th>
-                            %
-                        </th>
-
-                        <th>
-                            الحجم
-                        </th>
-
-                        <th>
-                            تحليل
-                        </th>
-
-                        <th>
-                            حذف
-                        </th>
-
-                    </tr>
-
-                    </thead>
-
-
-                    <tbody id="watch">
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ======================================================
-         VALUATION
-    ======================================================= -->
-
-    <section
-        id="valuation"
-        class="section"
-    >
-
-        <div class="section-title">
-
-            <h2>
-                التقييم
-            </h2>
-
-        </div>
-
-
-        <div class="grid g2">
-
-
-            <!-- GRAHAM -->
-
-            <div class="card">
-
-                <h3>
-                    Graham
-                </h3>
-
-
-                <div class="controls">
-
-                    <input
-                        id="eps"
-                        type="number"
-                        step="0.01"
-                        placeholder="EPS"
-                    >
-
-
-                    <input
-                        id="growth"
-                        type="number"
-                        step="0.1"
-                        placeholder="Growth %"
-                    >
-
-                </div>
-
-
-                <button
-                    class="btn primary"
-                    onclick="graham()"
-                >
-                    احسب
-                </button>
-
-
-                <div
-                    class="big"
-                    id="grahamResult"
-                >
-                    --
-                </div>
-
-
-                <p class="muted">
-
-                    القيمة التقريبية =
-                    EPS × (8.5 + 2g)
-
-                </p>
-
-            </div>
-
-
-            <!-- DCF -->
-
-            <div class="card">
-
-                <h3>
-                    DCF مبسط
-                </h3>
-
-
-                <div class="controls">
-
-                    <input
-                        id="fcf"
-                        type="number"
-                        step="0.01"
-                        placeholder="FCF"
-                    >
-
-
-                    <input
-                        id="dcfg"
-                        type="number"
-                        step="0.1"
-                        placeholder="Growth %"
-                    >
-
-
-                    <input
-                        id="discount"
-                        type="number"
-                        step="0.1"
-                        value="10"
-                        placeholder="Discount %"
-                    >
-
-
-                    <input
-                        id="terminal"
-                        type="number"
-                        step="0.1"
-                        value="3"
-                        placeholder="Terminal %"
-                    >
-
-
-                    <input
-                        id="shares"
-                        type="number"
-                        step="0.01"
-                        placeholder="Shares"
-                    >
-
-                </div>
-
-
-                <button
-                    class="btn primary"
-                    onclick="dcf()"
-                >
-                    احسب
-                </button>
-
-
-                <div
-                    class="big"
-                    id="dcfResult"
-                >
-                    --
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ======================================================
-         SETTINGS
-    ======================================================= -->
-
-    <section
-        id="settings"
-        class="section"
-    >
-
-        <div class="section-title">
-
-            <h2>
-                الإعدادات ومصدر البيانات
-            </h2>
-
-        </div>
-
-
-        <div class="grid g2">
-
-
-            <div class="card">
-
-                <div class="metric">
-
-                    <span>
-                        مصدر الأسعار
-                    </span>
-
-                    <b>
-                        Yahoo Finance
-                    </b>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <span>
-                        API Key
-                    </span>
-
-                    <b class="green">
-                        غير مطلوب
-                    </b>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <span>
-                        نوع البيانات
-                    </span>
-
-                    <b>
-                        قد تكون متأخرة
-                    </b>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <span>
-                        التحديث
-                    </span>
-
-                    <b>
-                        كل 60 ثانية
-                    </b>
-
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="metric">
-
-                    <span>
-                        آخر تحديث
-                    </span>
-
-                    <b id="last">
-                        --
-                    </b>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <span>
-                        وقت الرياض
-                    </span>
-
-                    <b id="clock">
-                        --
-                    </b>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <span>
-                        البيانات المحملة
-                    </span>
-
-                    <b id="loaded">
-                        --
-                    </b>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="section-title">
-
-            <h2>
-                Watchlist
-            </h2>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="controls">
-
-                <button
-                    class="btn primary"
-                    onclick="exportCSV()"
-                >
-                    تصدير CSV
-                </button>
-
-
-                <input
-                    type="file"
-                    id="csvFile"
-                    accept=".csv"
-                >
-
-
-                <button
-                    class="btn"
-                    onclick="importCSV()"
-                >
-                    استيراد CSV
-                </button>
-
-
-                <button
-                    class="btn danger"
-                    onclick="clearWatch()"
-                >
-                    مسح المفضلة
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
+  <div class="grid">
+    <div class="card">
+      <div class="label">مؤشر السوق السعودي TASI</div>
+      <div class="value" id="tasiValue">—</div>
+      <div class="sub" id="tasiChange">بانتظار البيانات</div>
+    </div>
+    <div class="card">
+      <div class="label">عدد الأسهم في القائمة</div>
+      <div class="value" id="stockCount">0</div>
+      <div class="sub">أسهم مدرجة للمتابعة</div>
+    </div>
+    <div class="card">
+      <div class="label">الأسهم المرتفعة</div>
+      <div class="value green" id="gainers">—</div>
+      <div class="sub">من الأسهم التي تم تحديثها</div>
+    </div>
+    <div class="card">
+      <div class="label">الأسهم المنخفضة</div>
+      <div class="value red" id="losers">—</div>
+      <div class="sub">من الأسهم التي تم تحديثها</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">قائمة الأسهم السعودية</h2>
+  <div class="toolbar">
+    <input id="search" placeholder="ابحث باسم الشركة أو رقم السهم..." oninput="renderTable()">
+    <select id="sort" onchange="renderTable()">
+      <option value="default">الترتيب الافتراضي</option>
+      <option value="change">الأعلى ارتفاعًا</option>
+      <option value="changeAsc">الأعلى انخفاضًا</option>
+      <option value="price">السعر من الأعلى</option>
+      <option value="name">الاسم</option>
+    </select>
+    <select id="filter" onchange="renderTable()">
+      <option value="all">كل الأسهم</option>
+      <option value="favorites">قائمة المتابعة ★</option>
+      <option value="available">البيانات المتاحة فقط</option>
+      <option value="unavailable">تعذر التحديث</option>
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>الشركة</th><th>آخر سعر (ر.س)</th><th>التغير</th>
+          <th>التغير %</th><th>حجم التداول</th><th>حالة البيانات</th><th>إجراء</th>
+        </tr>
+      </thead>
+      <tbody id="stockTable">
+        <tr><td colspan="7" style="text-align:center">جارٍ تحميل البيانات...</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    الأسعار مصدرها Yahoo Finance عبر وسيط وصول عام، وقد تكون متأخرة أو غير متاحة لبعض الشركات.
+    لا تمثل هذه اللوحة منصة تداول أو مصدرًا رسميًا للأسعار.
+  </div>
+
+  <h2 class="section-title">حاسبة التقييم المبدئي</h2>
+  <div class="card">
+    <p class="note">أدخل بيانات الشركة يدويًا لحساب قيمة تقديرية. النتائج تعليمية وليست توصية استثمارية.</p>
+    <div class="calc">
+      <label>ربحية السهم EPS<input id="eps" type="number" step="0.01" placeholder="مثال: 2.5"></label>
+      <label>معدل النمو المتوقع %<input id="growth" type="number" step="0.1" placeholder="مثال: 5"></label>
+      <label>التدفق النقدي الحر FCF (مليون)<input id="fcf" type="number" placeholder="مثال: 1000"></label>
+      <label>عدد الأسهم (مليون)<input id="shares" type="number" placeholder="مثال: 500"></label>
+      <label>معدل الخصم %<input id="discount" type="number" step="0.1" value="10"></label>
+      <label>نمو نهائي %<input id="terminal" type="number" step="0.1" value="2"></label>
+    </div>
+    <div class="toolbar" style="margin-top:15px">
+      <button class="primary" onclick="calculateValuation()">احسب التقييم</button>
+    </div>
+    <div id="valuationResult" class="result" style="display:none"></div>
+    <div class="note">Graham هنا صيغة مبسطة: EPS × (8.5 + 2 × النمو). وDCF تقديري بخمس سنوات مع قيمة نهائية مبسطة، ولا يتضمن صافي الدين أو جميع تعديلات التدفقات النقدية.</div>
+  </div>
+
+  <div class="footer">
+    آخر تحديث للبيانات: <span id="lastUpdate">لم يتم التحديث بعد</span><br>
+    يتم التحديث تلقائيًا كل 5 دقائق عند بقاء الصفحة مفتوحة. قد تختلف أوقات التداول والعطلات الرسمية عن توقيت تحديث المصدر.
+  </div>
 </main>
 
-
-<!-- =========================================================
-     ANALYSIS MODAL
-========================================================= -->
-
-<div
-    class="modal"
-    id="modal"
->
-
-    <div class="modal-box">
-
-        <div class="modal-head">
-
-            <h2 id="mTitle">
-                تحليل السهم
-            </h2>
-
-            <span
-                class="close"
-                onclick="closeModal()"
-            >
-                ×
-            </span>
-
-        </div>
-
-
-        <div class="analysis">
-
-
-            <div class="card">
-
-                <div class="label">
-                    السعر
-                </div>
-
-                <div
-                    class="big"
-                    id="mPrice"
-                >
-                    --
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="label">
-                    نسبة التغير
-                </div>
-
-                <div
-                    class="big"
-                    id="mPct"
-                >
-                    --
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="label">
-                    الحجم
-                </div>
-
-                <div
-                    class="big"
-                    id="mVol"
-                >
-                    --
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="label">
-                    نطاق 52 أسبوع
-                </div>
-
-                <div
-                    class="big"
-                    id="m52"
-                >
-                    --
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="card"
-            style="margin-top:14px"
-        >
-
-            <div class="metric">
-
-                <span>
-                    السعر
-                </span>
-
-                <b id="mPrice2">
-                    --
-                </b>
-
-            </div>
-
-
-            <div class="metric">
-
-                <span>
-                    أعلى 52 أسبوع
-                </span>
-
-                <b id="mHigh">
-                    --
-                </b>
-
-            </div>
-
-
-            <div class="metric">
-
-                <span>
-                    أدنى 52 أسبوع
-                </span>
-
-                <b id="mLow">
-                    --
-                </b>
-
-            </div>
-
-
-            <div class="metric">
-
-                <span>
-                    القيمة المتداولة
-                </span>
-
-                <b id="mTurnover">
-                    --
-                </b>
-
-            </div>
-
-        </div>
-
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalTitle">تفاصيل السهم</h3>
+      <button onclick="closeModal()">✕</button>
     </div>
-
+    <div class="modal-grid" id="modalContent"></div>
+    <div class="note" id="modalNote"></div>
+  </div>
 </div>
 
-
 <script>
-
-/* =========================================================
-   STOCK LIST
-========================================================= */
-
+// ==================================================
+// قائمة الأسهم - يمكن إضافة أو حذف الشركات من هنا
+// الرمز المستخدم في Yahoo Finance هو رقم السهم + .SR
+// ==================================================
 const STOCKS = [
-
-    ["2222", "أرامكو السعودية"],
-    ["1120", "مصرف الراجحي"],
-    ["1150", "مصرف الإنماء"],
-    ["1180", "البنك الأهلي السعودي"],
-    ["2010", "سابك"],
-    ["2020", "سابك للمغذيات الزراعية"],
-    ["2030", "المصافي"],
-    ["2040", "الخزف السعودي"],
-    ["2060", "التصنيع"],
-    ["2082", "أكوا باور"],
-    ["2280", "المراعي"],
-    ["2310", "سبكيم العالمية"],
-    ["2350", "كيمانول"],
-    ["2380", "بترو رابغ"],
-    ["2381", "الحبيب"],
-    ["2382", "بدجت السعودية"],
-    ["3003", "أسمنت المدينة"],
-    ["4003", "إكسترا"],
-    ["4013", "سليمان الحبيب"],
-    ["4190", "جرير"],
-    ["4240", "الحكير"],
-    ["4260", "بدجت"],
-    ["4280", "المملكة القابضة"],
-    ["5110", "الكهرباء السعودية"],
-    ["6004", "كاتريون"],
-    ["7010", "stc"],
-    ["7020", "اتحاد اتصالات"],
-    ["7030", "زين السعودية"],
-    ["7201", "بحر العرب"],
-    ["7202", "سلوشنز"],
-    ["7203", "علم"],
-    ["7204", "توبان"],
-    ["1211", "معادن"],
-    ["1303", "أسمنت السعودية"],
-    ["1304", "اليمامة للحديد"],
-    ["1320", "أنابيب السعودية"],
-    ["1830", "لجام للرياضة"],
-    ["1831", "مهارة"],
-    ["1832", "صدر"],
-    ["4002", "المواساة"],
-    ["4004", "دله الصحية"],
-    ["4005", "رعاية"],
-    ["4008", "ساكو"],
-    ["4061", "أنابيب الشرق"],
-    ["4164", "النهدي"],
-    ["4261", "ذيب"],
-    ["4290", "الخدمات الأرضية"],
-    ["4321", "سينومي سنترز"],
-    ["4322", "رتال"],
-    ["4323", "سمو"],
-    ["4330", "الرياض للتعمير"],
-    ["4331", "مدينة المعرفة"]
-
+  {symbol:"2222",name:"أرامكو السعودية"},
+  {symbol:"1120",name:"مصرف الراجحي"},
+  {symbol:"1180",name:"البنك الأهلي السعودي"},
+  {symbol:"1150",name:"مصرف الإنماء"},
+  {symbol:"1211",name:"شركة التعدين العربية السعودية - معادن"},
+  {symbol:"2083",name:"مرافق"},
+  {symbol:"4143",name:"تالكو"},
+  {symbol:"4017",name:"فقيه الطبية"},
+  {symbol:"2285",name:"المطاحن العربية"},
+  {symbol:"2310",name:"سبكيم العالمية"},
+  {symbol:"4190",name:"جرير"},
+  {symbol:"8210",name:"بوبا العربية"},
+  {symbol:"8010",name:"التعاونية"},
+  {symbol:"2370",name:"مسك"},
+  {symbol:"4260",name:"بدجت السعودية"},
+  {symbol:"4031",name:"الخدمات الأرضية"},
+  {symbol:"2280",name:"المراعي"},
+  {symbol:"7010",name:"stc"},
+  {symbol:"2380",name:"بترو رابغ"},
+  {symbol:"4001",name:"أسواق العثيم"}
 ];
 
+const TASI_SYMBOL = "^TASI.SR";
+const CACHE_KEY = "mizan_market_cache_v1";
+const FAVORITES_KEY = "mizan_favorites_v1";
+let marketData = {};
+let favorites = new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY)||"[]"));
+let isRefreshing = false;
 
-/* =========================================================
-   GLOBAL DATA
-========================================================= */
+const fmt = n => Number.isFinite(Number(n))
+  ? Number(n).toLocaleString("en-US",{maximumFractionDigits:2})
+  : "—";
 
-let data = [];
-
-
-let watch =
-    JSON.parse(
-        localStorage.getItem(
-            "saudiWatch"
-        ) || "[]"
-    );
-
-
-/* =========================================================
-   FALLBACK
-========================================================= */
-
-const FALLBACK = {
-
-    "2222": 25.50,
-    "1120": 95.50,
-    "1150": 29.80,
-    "1180": 32.40,
-    "2010": 65.20,
-    "2082": 210,
-    "2280": 55.50,
-    "4190": 14.20,
-    "7010": 43.20,
-    "7203": 103
-
-};
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-function tab(
-    id,
-    button
-) {
-
-    document
-        .querySelectorAll(
-            ".section"
-        )
-        .forEach(
-            section =>
-                section.classList.remove(
-                    "active"
-                )
-        );
-
-
-    document
-        .getElementById(id)
-        .classList.add(
-            "active"
-        );
-
-
-    document
-        .querySelectorAll(
-            "nav button"
-        )
-        .forEach(
-            btn =>
-                btn.classList.remove(
-                    "active"
-                )
-        );
-
-
-    button.classList.add(
-        "active"
-    );
-
+function setStatus(message, good=false){
+  document.getElementById("status").innerHTML =
+    `<span class="dot" style="background:${good?'var(--green)':'var(--gold)'}"></span>${message}`;
 }
 
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-function setStatus(
-    text,
-    state = "ok"
-) {
-
-    document.getElementById(
-        "status"
-    ).textContent =
-        text;
-
-
-    document.getElementById(
-        "dot"
-    ).style.background =
-        state === "bad"
-            ? "#ef5350"
-            : state === "wait"
-                ? "#f5b942"
-                : "#20c978";
-
+function loadCache(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(CACHE_KEY)||"{}");
+    marketData=saved.stocks||{};
+    if(saved.tasi) showTasi(saved.tasi);
+    renderTable();
+  }catch(e){console.warn("Cache error",e);}
 }
 
+// جلب البيانات من Yahoo Finance عبر وسطاء عامين
+async function fetchYahoo(symbol){
+  const yahooURL =
+    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=5d&interval=1d&events=history`;
 
-/* =========================================================
-   HELPERS
-========================================================= */
+  const urls=[
+    "https://corsproxy.io/?url="+encodeURIComponent(yahooURL),
+    "https://api.allorigins.win/raw?url="+encodeURIComponent(yahooURL)
+  ];
 
-function fmt(
-    value,
-    decimals = 2
-) {
+  let lastError=null;
+  for(const url of urls){
+    try{
+      const controller=new AbortController();
+      const timeout=setTimeout(()=>controller.abort(),15000);
+      const response=await fetch(url,{signal:controller.signal,cache:"no-store"});
+      clearTimeout(timeout);
+      if(!response.ok) throw new Error("HTTP "+response.status);
+      const json=await response.json();
+      const result=json?.chart?.result?.[0];
+      if(!result) throw new Error(json?.chart?.error?.description||"لا توجد بيانات");
 
-    if (
-        value === null ||
-        value === undefined ||
-        Number.isNaN(
-            Number(value)
-        )
-    ) {
+      const meta=result.meta||{};
+      const quotes=result.indicators?.quote?.[0]||{};
+      const closes=(quotes.close||[]).filter(v=>v!==null&&Number.isFinite(v));
+      const volumes=(quotes.volume||[]).filter(v=>v!==null&&Number.isFinite(v));
+      const price=Number(meta.regularMarketPrice ?? closes.at(-1));
+      const previous=Number(meta.chartPreviousClose ?? meta.previousClose ?? closes.at(-2));
+      if(!Number.isFinite(price)||price<=0) throw new Error("السعر غير متاح");
 
-        return "--";
+      const change=Number.isFinite(previous)?price-previous:null;
+      const changePct=Number.isFinite(previous)&&previous!==0?(change/previous)*100:null;
 
+      return {
+        price,previous,change,changePct,
+        volume:volumes.at(-1)??null,
+        currency:meta.currency||"SAR",
+        marketTime:meta.regularMarketTime||null,
+        fetchedAt:new Date().toISOString(),
+        stale:false
+      };
+    }catch(error){
+      lastError=error;
     }
-
-
-    return Number(value)
-        .toLocaleString(
-            "en-US",
-            {
-                minimumFractionDigits:
-                    decimals,
-
-                maximumFractionDigits:
-                    decimals
-            }
-        );
-
+  }
+  throw lastError||new Error("تعذر جلب البيانات");
 }
 
-
-function compact(
-    value
-) {
-
-    if (!value) {
-
-        return "--";
-
+async function fetchWithCache(stock){
+  try{
+    const fresh=await fetchYahoo(stock.symbol+".SR");
+    marketData[stock.symbol]={...fresh,source:"Yahoo Finance"};
+    return true;
+  }catch(error){
+    const old=marketData[stock.symbol];
+    if(old){
+      old.stale=true;
+      old.error=error.message;
+    }else{
+      marketData[stock.symbol]={
+        price:null,change:null,changePct:null,volume:null,
+        stale:true,error:error.message
+      };
     }
-
-
-    return Intl.NumberFormat(
-        "en-US",
-        {
-            notation: "compact",
-            maximumFractionDigits: 2
-        }
-    ).format(
-        value
-    );
-
+    return false;
+  }
 }
 
+async function refreshAll(){
+  if(isRefreshing)return;
+  isRefreshing=true;
+  const btn=document.getElementById("refreshBtn");
+  btn.disabled=true;
+  btn.textContent="جارٍ التحديث...";
+  setStatus("جارٍ جلب أحدث البيانات المتاحة...");
 
-function pctClass(
-    value
-) {
+  let success=0;
+  try{
+    // جلب المؤشر
+    try{
+      const tasi=await fetchYahoo(TASI_SYMBOL);
+      showTasi(tasi);
+      localStorage.setItem(CACHE_KEY,JSON.stringify({
+        stocks:marketData,tasi
+      }));
+    }catch(e){
+      document.getElementById("tasiChange").textContent="تعذر تحديث المؤشر";
+    }
 
-    return Number(value) >= 0
-        ? "green"
-        : "red";
+    // جلب الأسهم على دفعات لتخفيف الضغط على المصدر
+    for(let i=0;i<STOCKS.length;i+=4){
+      const batch=STOCKS.slice(i,i+4);
+      const results=await Promise.all(batch.map(fetchWithCache));
+      success+=results.filter(Boolean).length;
+      renderTable();
+      localStorage.setItem(CACHE_KEY,JSON.stringify({
+        stocks:marketData,
+        tasi:JSON.parse(localStorage.getItem(CACHE_KEY)||"{}").tasi||null
+      }));
+    }
 
+    const now=new Date();
+    document.getElementById("lastUpdate").textContent=now.toLocaleString("ar-SA");
+    const failed=STOCKS.length-success;
+    setStatus(`اكتمل التحديث: ${success} سهم متاح، ${failed} تعذر تحديثه.`,success>0);
+    renderTable();
+  }finally{
+    isRefreshing=false;
+    btn.disabled=false;
+    btn.textContent="↻ تحديث البيانات";
+  }
 }
 
-
-function esc(
-    value
-) {
-
-    return String(value)
-        .replace(
-            /[&<>"']/g,
-            function(match) {
-
-                return {
-
-                    "&": "&amp;",
-                    "<": "&lt;",
-                    ">": "&gt;",
-                    '"': "&quot;",
-                    "'": "&#039;"
-
-                }[match];
-
-            }
-        );
-
+function showTasi(data){
+  document.getElementById("tasiValue").textContent=fmt(data.price);
+  const change=data.changePct;
+  const el=document.getElementById("tasiChange");
+  el.textContent=change==null?"التغير غير متاح":
+    `${change>=0?"+":""}${fmt(change)}% (${change>=0?"+":""}${fmt(data.change)})`;
+  el.className="sub "+(change>0?"green":change<0?"red":"");
 }
 
-
-/* =========================================================
-   YAHOO FINANCE
-========================================================= */
-
-async function yahoo(
-    symbol
-) {
-
-    const url =
-        "https://query1.finance.yahoo.com/v8/finance/chart/"
-        +
-        encodeURIComponent(symbol)
-        +
-        "?range=1y&interval=1d&events=div%2Csplits";
-
-
-    const response =
-        await fetch(
-            url,
-            {
-                cache: "no-store"
-            }
-        );
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            "HTTP " +
-            response.status
-        );
-
-    }
-
-
-    const json =
-        await response.json();
-
-
-    const result =
-        json.chart &&
-        json.chart.result &&
-        json.chart.result[0];
-
-
-    if (!result) {
-
-        throw new Error(
-            "No data"
-        );
-
-    }
-
-
-    const quote =
-        result.indicators &&
-        result.indicators.quote &&
-        result.indicators.quote[0];
-
-
-    if (!quote) {
-
-        throw new Error(
-            "No quote data"
-        );
-
-    }
-
-
-    const closes =
-        quote.close || [];
-
-
-    let index =
-        closes.length - 1;
-
-
-    while (
-        index >= 0 &&
-        closes[index] == null
-    ) {
-
-        index--;
-
-    }
-
-
-    if (index < 0) {
-
-        throw new Error(
-            "No closing price"
-        );
-
-    }
-
-
-    const price =
-        Number(
-            closes[index]
-        );
-
-
-    const previous =
-        index > 0
-            ? Number(
-                closes[index - 1]
-            )
-            : price;
-
-
-    const change =
-        price -
-        previous;
-
-
-    const changePct =
-        previous
-            ? (
-                change /
-                previous
-            ) * 100
-            : 0;
-
-
-    const last252 =
-        closes
-            .filter(
-                value =>
-                    Number.isFinite(
-                        Number(value)
-                    )
-            )
-            .slice(-252);
-
-
-    const high52 =
-        last252.length
-            ? Math.max(
-                ...last252
-            )
-            : price;
-
-
-    const low52 =
-        last252.length
-            ? Math.min(
-                ...last252
-            )
-            : price;
-
-
-    const volumeArray =
-        quote.volume || [];
-
-
-    const volume =
-        Number(
-            volumeArray[index] || 0
-        );
-
-
-    const symbolClean =
-        symbol
-            .replace(
-                ".SR",
-                ""
-            );
-
-
-    const stockInfo =
-        STOCKS.find(
-            item =>
-                item[0] ===
-                symbolClean
-        );
-
-
-    return {
-
-        symbol:
-            symbolClean,
-
-        name:
-            stockInfo
-                ? stockInfo[1]
-                : symbolClean,
-
-        price,
-
-        previous,
-
-        change,
-
-        changePct,
-
-        volume,
-
-        turnover:
-            price * volume,
-
-        high52,
-
-        low52,
-
-        timestamp:
-            result.meta &&
-            result.meta.regularMarketTime
-                ? new Date(
-                    result.meta
-                        .regularMarketTime
-                        * 1000
-                )
-                : new Date()
-
-    };
-
+function renderTable(){
+  const query=(document.getElementById("search")?.value||"").trim().toLowerCase();
+  const filter=document.getElementById("filter")?.value||"all";
+  const sort=document.getElementById("sort")?.value||"default";
+
+  let list=STOCKS.filter(s=>{
+    const d=marketData[s.symbol]||{};
+    const matches=(s.name+" "+s.symbol).toLowerCase().includes(query);
+    if(!matches)return false;
+    if(filter==="favorites"&&!favorites.has(s.symbol))return false;
+    if(filter==="available"&&!Number.isFinite(d.price))return false;
+    if(filter==="unavailable"&&Number.isFinite(d.price)&&!d.stale)return false;
+    return true;
+  });
+
+  if(sort==="change")list.sort((a,b)=>(marketData[b.symbol]?.changePct??-Infinity)-(marketData[a.symbol]?.changePct??-Infinity));
+  if(sort==="changeAsc")list.sort((a,b)=>(marketData[a.symbol]?.changePct??Infinity)-(marketData[b.symbol]?.changePct??Infinity));
+  if(sort==="price")list.sort((a,b)=>(marketData[b.symbol]?.price??-Infinity)-(marketData[a.symbol]?.price??-Infinity));
+  if(sort==="name")list.sort((a,b)=>a.name.localeCompare(b.name,"ar"));
+
+  const body=document.getElementById("stockTable");
+  if(!list.length){
+    body.innerHTML='<tr><td colspan="7" style="text-align:center">لا توجد نتائج</td></tr>';
+  }else{
+    body.innerHTML=list.map(s=>{
+      const d=marketData[s.symbol]||{};
+      const available=Number.isFinite(d.price);
+      const pct=d.changePct;
+      const changeClass=pct>0?"green":pct<0?"red":"";
+      const state=available?(d.stale?"بيانات محفوظة":"تم التحديث"):"غير متاح";
+      const stateClass=available?(d.stale?"":"green"):"red";
+      return `<tr>
+        <td><div class="stock-name">${s.name}</div><div class="symbol">${s.symbol}</div></td>
+        <td class="price">${available?fmt(d.price):"—"}</td>
+        <td class="${changeClass}">${d.change==null?"—":(d.change>0?"+":"")+fmt(d.change)}</td>
+        <td class="${changeClass}">${pct==null?"—":(pct>0?"+":"")+fmt(pct)+"%"}</td>
+        <td>${d.volume==null?"—":fmt(d.volume)}</td>
+        <td><span class="badge ${stateClass}">${state}</span></td>
+        <td><div class="actions">
+          <button class="small-btn" onclick="showDetails('${s.symbol}')">تفاصيل</button>
+          <button class="small-btn star" onclick="toggleFavorite('${s.symbol}')">${favorites.has(s.symbol)?"★":"☆"}</button>
+        </div></td>
+      </tr>`;
+    }).join("");
+  }
+
+  document.getElementById("stockCount").textContent=STOCKS.length;
+  const usable=STOCKS.map(s=>marketData[s.symbol]).filter(d=>Number.isFinite(d?.price)&&!d.stale);
+  document.getElementById("gainers").textContent=usable.filter(d=>d.changePct>0).length;
+  document.getElementById("losers").textContent=usable.filter(d=>d.changePct<0).length;
 }
 
-
-/* =========================================================
-   LOAD ONE STOCK
-========================================================= */
-
-async function loadOne(
-    ticker,
-    name
-) {
-
-    try {
-
-        return await yahoo(
-            ticker + ".SR"
-        );
-
-    } catch (error) {
-
-        console.warn(
-            ticker,
-            error
-        );
-
-
-        /*
-         * Fallback only for
-         * a few known stocks.
-         */
-
-        const fallback =
-            FALLBACK[ticker];
-
-
-        if (
-            fallback !== undefined
-        ) {
-
-            return {
-
-                symbol: ticker,
-
-                name,
-
-                price: fallback,
-
-                previous: fallback,
-
-                change: 0,
-
-                changePct: 0,
-
-                volume: 0,
-
-                turnover: 0,
-
-                high52: fallback,
-
-                low52: fallback,
-
-                timestamp: new Date(),
-
-                fallback: true
-
-            };
-
-        }
-
-
-        return null;
-
-    }
-
+function toggleFavorite(symbol){
+  if(favorites.has(symbol))favorites.delete(symbol);
+  else favorites.add(symbol);
+  localStorage.setItem(FAVORITES_KEY,JSON.stringify([...favorites]));
+  renderTable();
 }
 
-
-/* =========================================================
-   REFRESH
-========================================================= */
-
-async function refresh() {
-
-    setStatus(
-        "جاري تحميل الأسعار...",
-        "wait"
-    );
-
-
-    const output = [];
-
-
-    /*
-     * We intentionally use small batches.
-     * This reduces the chance of hitting
-     * public endpoint limits.
-     */
-
-    for (
-        let i = 0;
-        i < STOCKS.length;
-        i += 8
-    ) {
-
-        const batch =
-            STOCKS.slice(
-                i,
-                i + 8
-            );
-
-
-        const results =
-            await Promise.all(
-                batch.map(
-                    item =>
-                        loadOne(
-                            item[0],
-                            item[1]
-                        )
-                )
-            );
-
-
-        output.push(
-            ...results.filter(
-                Boolean
-            )
-        );
-
-
-        /*
-         * Show partial results immediately.
-         */
-
-        data = output;
-
-        renderStocks(
-            output
-        );
-
-        renderTop();
-
-        renderWatch();
-
-        stats();
-
-
-        await new Promise(
-            resolve =>
-                setTimeout(
-                    resolve,
-                    150
-                )
-        );
-
-    }
-
-
-    data = output;
-
-
-    renderStocks();
-
-    renderTop();
-
-    renderWatch();
-
-    stats();
-
-
-    document.getElementById(
-        "last"
-    ).textContent =
-        riyadhTime();
-
-
-    document.getElementById(
-        "loaded"
-    ).textContent =
-        data.length;
-
-
-    if (data.length) {
-
-        setStatus(
-            "متصل — Yahoo Finance",
-            "ok"
-        );
-
-    } else {
-
-        setStatus(
-            "تعذر تحميل البيانات",
-            "bad"
-        );
-
-        showAlert(
-            "لم يتم تحميل بيانات الأسعار. قد يكون المصدر العام يمنع الطلبات المباشرة من المتصفح."
-        );
-
-    }
-
+function showDetails(symbol){
+  const stock=STOCKS.find(s=>s.symbol===symbol);
+  const d=marketData[symbol]||{};
+  document.getElementById("modalTitle").textContent=stock.name+" ("+symbol+")";
+  const items=[
+    ["آخر سعر",fmt(d.price)],
+    ["الإغلاق السابق",fmt(d.previous)],
+    ["التغير",fmt(d.change)],
+    ["نسبة التغير",d.changePct==null?"—":fmt(d.changePct)+"%"],
+    ["حجم التداول",fmt(d.volume)],
+    ["العملة",d.currency||"SAR"]
+  ];
+  document.getElementById("modalContent").innerHTML=items.map(([k,v])=>
+    `<div class="card"><div class="label">${k}</div><div class="value">${v}</div></div>`
+  ).join("");
+  document.getElementById("modalNote").textContent=d.stale
+    ?"تنبيه: البيانات المعروضة محفوظة من تحديث سابق، وليست تأكيدًا للسعر الحالي."
+    :"المصدر: Yahoo Finance. وقت استلام البيانات: "+(d.fetchedAt?new Date(d.fetchedAt).toLocaleString("ar-SA"):"غير متاح");
+  document.getElementById("modal").style.display="flex";
 }
 
-
-/* =========================================================
-   RENDER STOCKS
-========================================================= */
-
-function renderStocks(
-    source = data
-) {
-
-    const tbody =
-        document.getElementById(
-            "stocks"
-        );
-
-
-    if (!tbody) {
-
-        return;
-
-    }
-
-
-    const query =
-        (
-            document.getElementById(
-                "search"
-            )?.value || ""
-        )
-        .toLowerCase()
-        .trim();
-
-
-    let stocks =
-        source.filter(
-            stock =>
-
-                stock.name
-                    .toLowerCase()
-                    .includes(
-                        query
-                    )
-
-                ||
-
-                stock.symbol
-                    .includes(
-                        query
-                    )
-
-        );
-
-
-    const sort =
-        document.getElementById(
-            "sort"
-        )?.value ||
-        "symbol";
-
-
-    if (
-        sort === "symbol"
-    ) {
-
-        stocks.sort(
-            (a, b) =>
-                a.symbol.localeCompare(
-                    b.symbol
-                )
-        );
-
-    }
-
-
-    if (
-        sort === "price"
-    ) {
-
-        stocks.sort(
-            (a, b) =>
-                b.price -
-                a.price
-        );
-
-    }
-
-
-    if (
-        sort === "changePct"
-    ) {
-
-        stocks.sort(
-            (a, b) =>
-                b.changePct -
-                a.changePct
-        );
-
-    }
-
-
-    if (
-        sort === "volume"
-    ) {
-
-        stocks.sort(
-            (a, b) =>
-                b.volume -
-                a.volume
-        );
-
-    }
-
-
-    if (!stocks.length) {
-
-        tbody.innerHTML = `
-
-            <tr>
-
-                <td
-                    colspan="9"
-                    class="loading"
-                >
-                    لا توجد بيانات
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-
-    }
-
-
-    tbody.innerHTML =
-        stocks.map(
-            stock => {
-
-                const favorite =
-                    watch.includes(
-                        stock.symbol
-                    );
-
-
-                return `
-
-                    <tr>
-
-                        <td>
-
-                            <span
-                                class="star ${
-                                    favorite
-                                        ? "on"
-                                        : ""
-                                }"
-                                onclick="
-                                    toggleWatch(
-                                        '${stock.symbol}'
-                                    )
-                                "
-                            >
-                                ★
-                            </span>
-
-                        </td>
-
-
-                        <td class="symbol">
-
-                            ${esc(
-                                stock.symbol
-                            )}
-
-                        </td>
-
-
-                        <td>
-
-                            ${esc(
-                                stock.name
-                            )}
-
-                        </td>
-
-
-                        <td>
-
-                            ${fmt(
-                                stock.price
-                            )}
-
-                        </td>
-
-
-                        <td class="${
-                            pctClass(
-                                stock.change
-                            )
-                        }">
-
-                            ${fmt(
-                                stock.change
-                            )}
-
-                        </td>
-
-
-                        <td class="${
-                            pctClass(
-                                stock.changePct
-                            )
-                        }">
-
-                            ${fmt(
-                                stock.changePct
-                            )}%
-
-                        </td>
-
-
-                        <td>
-
-                            ${compact(
-                                stock.volume
-                            )}
-
-                        </td>
-
-
-                        <td>
-
-                            ${compact(
-                                stock.turnover
-                            )}
-
-                        </td>
-
-
-                        <td>
-
-                            <span
-                                class="
-                                    badge
-                                    ${
-                                        stock.changePct >= 0
-                                            ? "g"
-                                            : "r"
-                                    }
-                                "
-                            >
-
-                                ${
-                                    stock.changePct >= 0
-                                        ? "إيجابي"
-                                        : "سلبي"
-                                }
-
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-                `;
-
-            }
-        ).join("");
-
+function closeModal(){
+  document.getElementById("modal").style.display="none";
 }
 
+function calculateValuation(){
+  const eps=Number(document.getElementById("eps").value);
+  const growth=Number(document.getElementById("growth").value);
+  const fcf=Number(document.getElementById("fcf").value);
+  const shares=Number(document.getElementById("shares").value);
+  const discount=Number(document.getElementById("discount").value);
+  const terminal=Number(document.getElementById("terminal").value);
 
-/* =========================================================
-   TOP STOCKS
-========================================================= */
+  if(!Number.isFinite(eps)||!Number.isFinite(growth)||eps<=0){
+    alert("أدخل ربحية سهم ومعدل نمو صحيحين لحساب Graham.");
+    return;
+  }
 
-function renderTop() {
-
-    const tbody =
-        document.getElementById(
-            "top"
-        );
-
-
-    const top =
-        [...data]
-            .sort(
-                (a, b) =>
-                    Math.abs(
-                        b.changePct
-                    )
-                    -
-                    Math.abs(
-                        a.changePct
-                    )
-            )
-            .slice(
-                0,
-                12
-            );
-
-
-    if (!top.length) {
-
-        tbody.innerHTML = `
-
-            <tr>
-
-                <td
-                    colspan="6"
-                    class="loading"
-                >
-                    لا توجد بيانات
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-
+  const graham=eps*(8.5+2*growth);
+  let dcfText="لم يتم حساب DCF: أدخل التدفق النقدي وعدد الأسهم ومعدل خصم صالحًا.";
+  if(fcf>0&&shares>0&&discount>terminal&&discount>0){
+    let pv=0;
+    for(let year=1;year<=5;year++){
+      const cash=fcf*Math.pow(1+growth/100,year);
+      pv+=cash/Math.pow(1+discount/100,year);
     }
+    const year6=fcf*Math.pow(1+growth/100,5)*Math.pow(1+terminal/100,1);
+    const tv=year6/((discount-terminal)/100);
+    pv+=tv/Math.pow(1+discount/100,5);
+    dcfText="قيمة DCF التقديرية للسهم: "+fmt(pv/shares)+" ريال";
+  }
 
-
-    tbody.innerHTML =
-        top.map(
-            stock => `
-
-                <tr>
-
-                    <td class="symbol">
-
-                        ${esc(
-                            stock.symbol
-                        )}
-
-                    </td>
-
-
-                    <td>
-
-                        ${fmt(
-                            stock.price
-                        )}
-
-                    </td>
-
-
-                    <td class="${
-                        pctClass(
-                            stock.change
-                        )
-                    }">
-
-                        ${fmt(
-                            stock.change
-                        )}
-
-                    </td>
-
-
-                    <td class="${
-                        pctClass(
-                            stock.changePct
-                        )
-                    }">
-
-                        ${fmt(
-                            stock.changePct
-                        )}%
-
-                    </td>
-
-
-                    <td>
-
-                        ${compact(
-                            stock.volume
-                        )}
-
-                    </td>
-
-
-                    <td>
-
-                        <span
-                            class="
-                                badge
-                                ${
-                                    stock.changePct >= 0
-                                        ? "g"
-                                        : "r"
-                                }
-                            "
-                        >
-
-                            ${
-                                stock.changePct >= 0
-                                    ? "صاعد"
-                                    : "هابط"
-                            }
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-            `
-        ).join("");
-
+  const result=document.getElementById("valuationResult");
+  result.style.display="block";
+  result.innerHTML=`<b>نتائج التقييم المبدئي</b><br>
+    Graham: <b>${fmt(graham)} ريال</b><br>
+    ${dcfText}<br>
+    <span class="note">هذه النماذج تعتمد على افتراضاتك المدخلة، وتتغير نتائجها بتغير النمو ومعدل الخصم.</span>`;
 }
 
-
-/* =========================================================
-   WATCHLIST
-========================================================= */
-
-function toggleWatch(
-    symbol
-) {
-
-    if (
-        watch.includes(
-            symbol
-        )
-    ) {
-
-        watch =
-            watch.filter(
-                x =>
-                    x !== symbol
-            );
-
-    } else {
-
-        watch.push(
-            symbol
-        );
-
-    }
-
-
-    localStorage.setItem(
-        "saudiWatch",
-        JSON.stringify(
-            watch
-        )
-    );
-
-
-    renderStocks();
-
-    renderWatch();
-
-}
-
-
-/* =========================================================
-   WATCHLIST RENDER
-========================================================= */
-
-function renderWatch() {
-
-    const tbody =
-        document.getElementById(
-            "watch"
-        );
-
-
-    const selected =
-        watch
-            .map(
-                symbol =>
-                    data.find(
-                        stock =>
-                            stock.symbol ===
-                            symbol
-                    )
-            )
-            .filter(
-                Boolean
-            );
-
-
-    if (!selected.length) {
-
-        tbody.innerHTML = `
-
-            <tr>
-
-                <td
-                    colspan="6"
-                    class="loading"
-                >
-                    لم تتم إضافة أسهم
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-
-    }
-
-
-    tbody.innerHTML =
-        selected.map(
-            stock => `
-
-                <tr>
-
-                    <td class="symbol">
-
-                        ${esc(
-                            stock.symbol
-                        )}
-
-                        —
-                        ${esc(
-                            stock.name
-                        )}
-
-                    </td>
-
-
-                    <td>
-
-                        ${fmt(
-                            stock.price
-                        )}
-
-                    </td>
-
-
-                    <td class="${
-                        pctClass(
-                            stock.changePct
-                        )
-                    }">
-
-                        ${fmt(
-                            stock.changePct
-                        )}%
-
-                    </td>
-
-
-                    <td>
-
-                        ${compact(
-                            stock.volume
-                        )}
-
-                    </td>
-
-
-                    <td>
-
-                        <button
-                            class="btn"
-                            onclick="
-                                openAnalysis(
-                                    '${stock.symbol}'
-                                )
-                            "
-                        >
-                            تحليل
-                        </button>
-
-                    </td>
-
-
-                    <td>
-
-                        <button
-                            class="btn danger"
-                            onclick="
-                                toggleWatch(
-                                    '${stock.symbol}'
-                                )
-                            "
-                        >
-                            حذف
-                        </button>
-
-                    </td>
-
-                </tr>
-
-            `
-        ).join("");
-
-}
-
-
-/* =========================================================
-   STATISTICS
-========================================================= */
-
-function stats() {
-
-    document.getElementById(
-        "count"
-    ).textContent =
-        data.length;
-
-
-    document.getElementById(
-        "gainers"
-    ).textContent =
-        data.filter(
-            stock =>
-                stock.changePct > 0
-        ).length;
-
-
-    document.getElementById(
-        "losers"
-    ).textContent =
-        data.filter(
-            stock =>
-                stock.changePct < 0
-        ).length;
-
-
-    /*
-     * TASI
-     */
-
-    yahoo(
-        "^TASI.SR"
-    )
-        .then(
-            stock => {
-
-                document.getElementById(
-                    "tasi"
-                ).textContent =
-                    fmt(
-                        stock.price
-                    );
-
-
-                const change =
-                    document.getElementById(
-                        "tasiChange"
-                    );
-
-
-                change.textContent =
-
-                    `${fmt(
-                        stock.change
-                    )}
-                    (
-                    ${fmt(
-                        stock.changePct
-                    )}%
-                    )`;
-
-
-                change.className =
-                    pctClass(
-                        stock.changePct
-                    );
-
-            }
-        )
-        .catch(
-            () => {
-
-                document.getElementById(
-                    "tasi"
-                ).textContent =
-                    "--";
-
-
-                document.getElementById(
-                    "tasiChange"
-                ).textContent =
-                    "بيانات المؤشر غير متاحة";
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-   ANALYSIS
-========================================================= */
-
-function openAnalysis(
-    symbol
-) {
-
-    const stock =
-        data.find(
-            item =>
-                item.symbol ===
-                symbol
-        );
-
-
-    if (!stock) {
-
-        return;
-
-    }
-
-
-    document.getElementById(
-        "mTitle"
-    ).textContent =
-        `${stock.name} (${stock.symbol})`;
-
-
-    document.getElementById(
-        "mPrice"
-    ).textContent =
-        fmt(
-            stock.price
-        );
-
-
-    const pct =
-        document.getElementById(
-            "mPct"
-        );
-
-
-    pct.textContent =
-        `${fmt(
-            stock.changePct
-        )}%`;
-
-
-    pct.className =
-        `big ${
-            pctClass(
-                stock.changePct
-            )
-        }`;
-
-
-    document.getElementById(
-        "mVol"
-    ).textContent =
-        compact(
-            stock.volume
-        );
-
-
-    document.getElementById(
-        "m52"
-    ).textContent =
-        `${fmt(
-            stock.low52
-        )} — ${fmt(
-            stock.high52
-        )}`;
-
-
-    document.getElementById(
-        "mPrice2"
-    ).textContent =
-        fmt(
-            stock.price
-        );
-
-
-    document.getElementById(
-        "mHigh"
-    ).textContent =
-        fmt(
-            stock.high52
-        );
-
-
-    document.getElementById(
-        "mLow"
-    ).textContent =
-        fmt(
-            stock.low52
-        );
-
-
-    document.getElementById(
-        "mTurnover"
-    ).textContent =
-        compact(
-            stock.turnover
-        );
-
-
-    document.getElementById(
-        "modal"
-    ).classList.add(
-        "open"
-    );
-
-}
-
-
-function closeModal() {
-
-    document.getElementById(
-        "modal"
-    ).classList.remove(
-        "open"
-    );
-
-}
-
-
-window.addEventListener(
-    "click",
-    function(event) {
-
-        if (
-            event.target.id ===
-            "modal"
-        ) {
-
-            closeModal();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   GRAHAM
-========================================================= */
-
-function graham() {
-
-    const eps =
-        Number(
-            document.getElementById(
-                "eps"
-            ).value
-        );
-
-
-    const growth =
-        Number(
-            document.getElementById(
-                "growth"
-            ).value
-        );
-
-
-    if (
-        !eps ||
-        growth < 0
-    ) {
-
-        alert(
-            "أدخل EPS والنمو"
-        );
-
-        return;
-
-    }
-
-
-    const value =
-        eps *
-        (
-            8.5 +
-            2 * growth
-        );
-
-
-    document.getElementById(
-        "grahamResult"
-    ).textContent =
-        fmt(
-            value
-        );
-
-}
-
-
-/* =========================================================
-   DCF
-========================================================= */
-
-function dcf() {
-
-    const fcf =
-        Number(
-            document.getElementById(
-                "fcf"
-            ).value
-        );
-
-
-    const growth =
-        Number(
-            document.getElementById(
-                "dcfg"
-            ).value
-        ) / 100;
-
-
-    const discount =
-        Number(
-            document.getElementById(
-                "discount"
-            ).value
-        ) / 100;
-
-
-    const terminal =
-        Number(
-            document.getElementById(
-                "terminal"
-            ).value
-        ) / 100;
-
-
-    const shares =
-        Number(
-            document.getElementById(
-                "shares"
-            ).value
-        );
-
-
-    if (
-        !fcf ||
-        !shares ||
-        discount <= terminal
-    ) {
-
-        alert(
-            "تحقق من المدخلات. يجب أن يكون Discount Rate أكبر من Terminal Growth."
-        );
-
-        return;
-
-    }
-
-
-    let pv = 0;
-
-    let current =
-        fcf;
-
-
-    for (
-        let year = 1;
-        year <= 5;
-        year++
-    ) {
-
-        current *=
-            1 + growth;
-
-
-        pv +=
-            current /
-            Math.pow(
-                1 + discount,
-                year
-            );
-
-    }
-
-
-    const terminalValue =
-        current *
-        (
-            1 + terminal
-        )
-        /
-        (
-            discount -
-            terminal
-        );
-
-
-    const terminalPV =
-        terminalValue /
-        Math.pow(
-            1 + discount,
-            5
-        );
-
-
-    const fairValue =
-        (
-            pv +
-            terminalPV
-        )
-        /
-        shares;
-
-
-    document.getElementById(
-        "dcfResult"
-    ).textContent =
-        fmt(
-            fairValue
-        );
-
-}
-
-
-/* =========================================================
-   IMPORT / EXPORT
-========================================================= */
-
-function exportCSV() {
-
-    const csv =
-        "symbol\n" +
-        watch.join(
-            "\n"
-        );
-
-
-    const blob =
-        new Blob(
-            [
-                "\ufeff" +
-                csv
-            ],
-            {
-                type:
-                    "text/csv;charset=utf-8"
-            }
-        );
-
-
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-
-    const link =
-        document.createElement(
-            "a"
-        );
-
-
-    link.href =
-        url;
-
-
-    link.download =
-        "watchlist.csv";
-
-
-    link.click();
-
-
-    URL.revokeObjectURL(
-        url
-    );
-
-}
-
-
-function importCSV() {
-
-    const file =
-        document.getElementById(
-            "csvFile"
-        ).files[0];
-
-
-    if (!file) {
-
-        alert(
-            "اختر ملف CSV"
-        );
-
-        return;
-
-    }
-
-
-    const reader =
-        new FileReader();
-
-
-    reader.onload =
-        function(event) {
-
-            const rows =
-                event.target.result
-                    .split(
-                        /\r?\n/
-                    )
-                    .slice(1)
-                    .map(
-                        row =>
-                            row
-                                .split(
-                                    ","
-                                )[0]
-                                .trim()
-                    )
-                    .filter(
-                        Boolean
-                    );
-
-
-            watch =
-                [
-                    ...new Set(
-                        rows
-                    )
-                ];
-
-
-            localStorage.setItem(
-                "saudiWatch",
-                JSON.stringify(
-                    watch
-                )
-            );
-
-
-            renderStocks();
-
-            renderWatch();
-
-        };
-
-
-    reader.readAsText(
-        file
-    );
-
-}
-
-
-function clearWatch() {
-
-    if (
-        !confirm(
-            "هل تريد حذف جميع الأسهم من المفضلة؟"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    watch = [];
-
-
-    localStorage.removeItem(
-        "saudiWatch"
-    );
-
-
-    renderStocks();
-
-    renderWatch();
-
-}
-
-
-/* =========================================================
-   TIME
-========================================================= */
-
-function riyadhTime() {
-
-    return new Date()
-        .toLocaleString(
-            "ar-SA",
-            {
-                timeZone:
-                    "Asia/Riyadh",
-
-                dateStyle:
-                    "medium",
-
-                timeStyle:
-                    "medium"
-            }
-        );
-
-}
-
-
-function updateClock() {
-
-    document.getElementById(
-        "clock"
-    ).textContent =
-        riyadhTime();
-
-}
-
-
-setInterval(
-    updateClock,
-    1000
-);
-
-
-/* =========================================================
-   ALERT
-========================================================= */
-
-function showAlert(
-    message
-) {
-
-    const alert =
-        document.getElementById(
-            "alert"
-        );
-
-
-    alert.textContent =
-        message;
-
-
-    alert.style.display =
-        "block";
-
-
-    setTimeout(
-        () => {
-
-            alert.style.display =
-                "none";
-
-        },
-        6000
-    );
-
-}
-
-
-/* =========================================================
-   AUTO REFRESH
-========================================================= */
-
-setInterval(
-    refresh,
-    60000
-);
-
-
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        updateClock();
-
-        renderStocks(
-            []
-        );
-
-        renderTop();
-
-        renderWatch();
-
-        refresh();
-
-    }
-);
-
+// بدء التشغيل
+loadCache();
+refreshAll();
+setInterval(refreshAll,5*60*1000);
 </script>
-
 </body>
 </html>

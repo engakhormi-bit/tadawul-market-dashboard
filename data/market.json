@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-11-26T03:38:13.132569+00:00",
+  "updated_at": "2026-11-26T04:44:04.688807+00:00",
   "source": "Yahoo Finance",
   "tasi": {
     "price": 9913.98,
     "previous": 9977.06,
     "change": -63.08,
     "changePct": -0.6323,
-    "volume": 147696985,
+    "volume": 0,
     "timestamp": 1795609199,
     "stale": false,
     "error": null,
